@@ -26,7 +26,7 @@ describe('os-place-lookup route', () => {
 
     it('has correct path with query parameter', () => {
       const route = require('./os-place-lookup')
-      expect(route.path).toBe('/proxy/place-lookup/{query}')
+      expect(route.path).toBe('/place-lookup/{query}')
     })
 
     it('disables authentication', () => {
@@ -64,7 +64,7 @@ describe('os-place-lookup route', () => {
         method: 'GET',
         params: { query: 'London' },
         url: {
-          href: 'http://localhost:3005/proxy/place-lookup/London'
+          href: 'http://localhost:3005/place-lookup/London'
         }
       })
 
@@ -88,7 +88,7 @@ describe('os-place-lookup route', () => {
         method: 'GET',
         params: { query: 'London' },
         url: {
-          href: 'http://localhost:3005/proxy/place-lookup/London'
+          href: 'http://localhost:3005/place-lookup/London'
         }
       })
 
@@ -117,7 +117,7 @@ describe('os-place-lookup route', () => {
         method: 'GET',
         params: { query: 'Brighton' },
         url: {
-          href: 'http://localhost:3005/proxy/place-lookup/Brighton'
+          href: 'http://localhost:3005/place-lookup/Brighton'
         }
       })
 
@@ -140,7 +140,7 @@ describe('os-place-lookup route', () => {
         method: 'GET',
         params: { query: 'Brighton%20and%20Hove' },
         url: {
-          href: 'http://localhost:3005/proxy/place-lookup/Brighton%20and%20Hove'
+          href: 'http://localhost:3005/place-lookup/Brighton%20and%20Hove'
         }
       })
 
@@ -163,7 +163,7 @@ describe('os-place-lookup route', () => {
         method: 'GET',
         params: { query: 'b' },
         url: {
-          href: 'http://localhost:3005/proxy/place-lookup/b'
+          href: 'http://localhost:3005/place-lookup/b'
         }
       })
 
@@ -187,7 +187,7 @@ describe('os-place-lookup route', () => {
         method: 'GET',
         params: { query: 'London' },
         url: {
-          href: 'http://localhost:3005/proxy/place-lookup/London'
+          href: 'http://localhost:3005/place-lookup/London'
         }
       })
 
@@ -209,7 +209,7 @@ describe('os-place-lookup route', () => {
         method: 'GET',
         params: { query: 'London' },
         url: {
-          href: 'http://localhost:3005/proxy/place-lookup/London'
+          href: 'http://localhost:3005/place-lookup/London'
         }
       })
 
@@ -234,7 +234,7 @@ describe('os-place-lookup route', () => {
           method: 'GET',
           params: { query: 'London' },
           url: {
-            href: 'http://localhost:3005/proxy/place-lookup/London'
+            href: 'http://localhost:3005/place-lookup/London'
           }
         })
       ).rejects.toThrow('Token service unavailable')
@@ -257,7 +257,7 @@ describe('os-place-lookup route', () => {
           method: 'GET',
           params: { query: 'London' },
           url: {
-            href: 'http://localhost:3005/proxy/place-lookup/London'
+            href: 'http://localhost:3005/place-lookup/London'
           }
         })
       ).rejects.toThrow('API error')
@@ -281,7 +281,7 @@ describe('os-place-lookup route', () => {
         method: 'GET',
         params: { query: 'London' },
         url: {
-          href: 'http://localhost:3005/proxy/place-lookup/London'
+          href: 'http://localhost:3005/place-lookup/London'
         }
       })
 
@@ -289,7 +289,7 @@ describe('os-place-lookup route', () => {
         'os lookup request received',
         expect.objectContaining({
           method: 'GET',
-          requestUrl: 'http://localhost:3005/proxy/place-lookup/London'
+          requestUrl: 'http://localhost:3005/place-lookup/London'
         })
       )
     })
@@ -310,7 +310,7 @@ describe('os-place-lookup route', () => {
         method: 'GET',
         params: { query: 'London' },
         url: {
-          href: 'http://localhost:3005/proxy/place-lookup/London'
+          href: 'http://localhost:3005/place-lookup/London'
         }
       })
 
@@ -338,7 +338,7 @@ describe('os-place-lookup route', () => {
         method: 'POST',
         params: { query: 'London' },
         url: {
-          href: 'http://localhost:3005/proxy/place-lookup/London'
+          href: 'http://localhost:3005/place-lookup/London'
         }
       })
 
@@ -368,7 +368,7 @@ describe('os-place-lookup route', () => {
         method: 'GET',
         params: { query: 'London' },
         url: {
-          href: 'http://localhost:3005/proxy/place-lookup/London'
+          href: 'http://localhost:3005/place-lookup/London'
         }
       })
 
@@ -392,7 +392,7 @@ describe('os-place-lookup route', () => {
         method: 'POST',
         params: { query: 'London' },
         url: {
-          href: 'http://localhost:3005/proxy/place-lookup/London'
+          href: 'http://localhost:3005/place-lookup/London'
         }
       })
 
@@ -417,7 +417,7 @@ describe('os-place-lookup route', () => {
         method: 'GET',
         params: { query: "St%20John's" },
         url: {
-          href: "http://localhost:3005/proxy/place-lookup/St%20John's"
+          href: "http://localhost:3005/place-lookup/St%20John's"
         }
       })
 
@@ -441,7 +441,7 @@ describe('os-place-lookup route', () => {
         method: 'GET',
         params: { query: longQuery },
         url: {
-          href: `http://localhost:3005/proxy/place-lookup/${longQuery}`
+          href: `http://localhost:3005/place-lookup/${longQuery}`
         }
       })
 
@@ -464,7 +464,7 @@ describe('os-place-lookup route', () => {
         method: 'GET',
         params: { query: '' },
         url: {
-          href: 'http://localhost:3005/proxy/place-lookup/'
+          href: 'http://localhost:3005/place-lookup/'
         }
       })
 

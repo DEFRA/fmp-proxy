@@ -39,7 +39,7 @@ describe('esri-proxy route', () => {
     const route = require('./esri-proxy')
 
     expect(route.method).toEqual(['GET', 'POST'])
-    expect(route.path).toBe('/proxy/esri/{path*}')
+    expect(route.path).toBe('/esri/{path*}')
 
     const result = await route.options.handler.proxy.mapUri({
       method: 'GET',
@@ -52,7 +52,7 @@ describe('esri-proxy route', () => {
         outFields: 'OBJECTID'
       },
       url: {
-        pathname: '/proxy/esri/FeatureServer/0/query',
+        pathname: '/esri/FeatureServer/0/query',
         search: '?f=json&token=browser-token&outFields=OBJECTID'
       }
     })

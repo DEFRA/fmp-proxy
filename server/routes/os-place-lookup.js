@@ -24,7 +24,7 @@ const buildMapUri = async (request) => {
 
 module.exports = {
   method: ['GET', 'POST'],
-  path: '/proxy/place-lookup/{query}',
+  path: '/place-lookup/{query}',
   options: {
     description: 'Proxy a vague OS place lookup request while injecting bearer token server-side',
     auth: false,

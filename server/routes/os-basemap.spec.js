@@ -28,7 +28,7 @@ describe('os-basemap route', () => {
 
     it('has correct path with wildcard', () => {
       const route = require('./os-basemap')
-      expect(route.path).toBe('/proxy/basemap/{path*}')
+      expect(route.path).toBe('/basemap/{path*}')
     })
 
     it('disables authentication', () => {
@@ -60,7 +60,7 @@ describe('os-basemap route', () => {
         method: 'GET',
         params: { path: 'wmts' },
         query: {},
-        url: { pathname: '/proxy/basemap/wmts', search: '' }
+        url: { pathname: '/basemap/wmts', search: '' }
       })
 
       const uri = new URL(result.uri)
@@ -89,7 +89,7 @@ describe('os-basemap route', () => {
         method: 'GET',
         params: { path: 'wmts' },
         query: { target: '/custom/wmts/path' },
-        url: { pathname: '/proxy/basemap/wmts', search: '?target=/custom/wmts/path' }
+        url: { pathname: '/basemap/wmts', search: '?target=/custom/wmts/path' }
       })
 
       const uri = new URL(result.uri)
@@ -113,7 +113,7 @@ describe('os-basemap route', () => {
         method: 'GET',
         params: { path: 'wmts' },
         query: { subpath: '1.0.0/WMTSCapabilities.xml' },
-        url: { pathname: '/proxy/basemap/wmts', search: '?subpath=1.0.0/WMTSCapabilities.xml' }
+        url: { pathname: '/basemap/wmts', search: '?subpath=1.0.0/WMTSCapabilities.xml' }
       })
 
       const uri = new URL(result.uri)
@@ -136,7 +136,7 @@ describe('os-basemap route', () => {
         method: 'GET',
         params: { path: 'wmts' },
         query: {},
-        url: { pathname: '/proxy/basemap/wmts', search: '' }
+        url: { pathname: '/basemap/wmts', search: '' }
       })
 
       const uri = new URL(result.uri)
@@ -158,7 +158,7 @@ describe('os-basemap route', () => {
         method: 'GET',
         params: { path: 'wmts' },
         query: { key: 'custom-key' },
-        url: { pathname: '/proxy/basemap/wmts', search: '?key=custom-key' }
+        url: { pathname: '/basemap/wmts', search: '?key=custom-key' }
       })
 
       const uri = new URL(result.uri)
@@ -180,7 +180,7 @@ describe('os-basemap route', () => {
         method: 'GET',
         params: { path: 'wmts' },
         query: { type: 'wmts', target: '/maps/raster/v1/wmts', LAYER: 'Outdoor_27700' },
-        url: { pathname: '/proxy/basemap/wmts', search: '?type=wmts&target=/maps/raster/v1/wmts&LAYER=Outdoor_27700' }
+        url: { pathname: '/basemap/wmts', search: '?type=wmts&target=/maps/raster/v1/wmts&LAYER=Outdoor_27700' }
       })
 
       const uri = new URL(result.uri)
@@ -204,7 +204,7 @@ describe('os-basemap route', () => {
         method: 'GET',
         params: { path: 'wmts' },
         query: { LAYER: 'Outdoor_27700', REQUEST: 'GetTile', FORMAT: 'image/png' },
-        url: { pathname: '/proxy/basemap/wmts', search: '?LAYER=Outdoor_27700&REQUEST=GetTile&FORMAT=image/png' }
+        url: { pathname: '/basemap/wmts', search: '?LAYER=Outdoor_27700&REQUEST=GetTile&FORMAT=image/png' }
       })
 
       const uri = new URL(result.uri)
@@ -230,7 +230,7 @@ describe('os-basemap route', () => {
         method: 'GET',
         params: { path: 'styles/road.json' },
         query: {},
-        url: { pathname: '/proxy/basemap/styles/road.json', search: '' }
+        url: { pathname: '/basemap/styles/road.json', search: '' }
       })
 
       const uri = new URL(result.uri)
@@ -252,7 +252,7 @@ describe('os-basemap route', () => {
         method: 'GET',
         params: { path: '' },
         query: {},
-        url: { pathname: '/proxy/basemap', search: '' }
+        url: { pathname: '/basemap', search: '' }
       })
 
       const uri = new URL(result.uri)
@@ -274,7 +274,7 @@ describe('os-basemap route', () => {
         method: 'GET',
         params: { path: '' },
         query: { type: 'vector', target: '/maps/vector/v1/vts', epsg: '27700' },
-        url: { pathname: '/proxy/basemap', search: '?type=vector&target=/maps/vector/v1/vts&epsg=27700' }
+        url: { pathname: '/basemap', search: '?type=vector&target=/maps/vector/v1/vts&epsg=27700' }
       })
 
       const uri = new URL(result.uri)
@@ -298,7 +298,7 @@ describe('os-basemap route', () => {
         method: 'GET',
         params: { path: 'styles/road.json' },
         query: { epsg: '27700', slds: 'true' },
-        url: { pathname: '/proxy/basemap/styles/road.json', search: '?epsg=27700&slds=true' }
+        url: { pathname: '/basemap/styles/road.json', search: '?epsg=27700&slds=true' }
       })
 
       const uri = new URL(result.uri)
@@ -323,7 +323,7 @@ describe('os-basemap route', () => {
         method: 'GET',
         params: { path: 'wmts' },
         query: {},
-        url: { pathname: '/proxy/basemap/wmts', search: '' }
+        url: { pathname: '/basemap/wmts', search: '' }
       })
 
       expect(result.headers).toEqual({ authorization: 'Bearer test-bearer-token' })
@@ -344,7 +344,7 @@ describe('os-basemap route', () => {
         method: 'GET',
         params: { path: 'wmts' },
         query: {},
-        url: { pathname: '/proxy/basemap/wmts', search: '' }
+        url: { pathname: '/basemap/wmts', search: '' }
       })
 
       expect(getOsTokenMock).toHaveBeenCalledTimes(1)
@@ -368,13 +368,13 @@ describe('os-basemap route', () => {
         method: 'GET',
         params: { path: 'wmts' },
         query: { key: 'test' },
-        url: { pathname: '/proxy/basemap/wmts', search: '?key=test' }
+        url: { pathname: '/basemap/wmts', search: '?key=test' }
       })
 
       expect(logDebugMock).toHaveBeenCalledWith(
         'os basemap request received',
         expect.objectContaining({
-          requestUrl: '/proxy/basemap/wmts?key=test'
+          requestUrl: '/basemap/wmts?key=test'
         })
       )
     })
@@ -395,7 +395,7 @@ describe('os-basemap route', () => {
         method: 'GET',
         params: { path: 'wmts' },
         query: {},
-        url: { pathname: '/proxy/basemap/wmts', search: '' }
+        url: { pathname: '/basemap/wmts', search: '' }
       })
 
       expect(logDebugMock).toHaveBeenCalledWith(
@@ -422,7 +422,7 @@ describe('os-basemap route', () => {
         method: 'POST',
         params: { path: 'wmts' },
         query: {},
-        url: { pathname: '/proxy/basemap/wmts', search: '' }
+        url: { pathname: '/basemap/wmts', search: '' }
       })
 
       expect(logDebugMock).toHaveBeenCalledWith(
@@ -450,7 +450,7 @@ describe('os-basemap route', () => {
         method: 'GET',
         params: { path: 'wmts' },
         query: null,
-        url: { pathname: '/proxy/basemap/wmts', search: '' }
+        url: { pathname: '/basemap/wmts', search: '' }
       })
 
       expect(result.uri).toContain('https://api.os.uk')
@@ -471,7 +471,7 @@ describe('os-basemap route', () => {
         method: 'GET',
         params: { path: 'wmts/test' },
         query: { target: '/maps/raster/v1/wmts/' },
-        url: { pathname: '/proxy/basemap/wmts/test', search: '?target=/maps/raster/v1/wmts/' }
+        url: { pathname: '/basemap/wmts/test', search: '?target=/maps/raster/v1/wmts/' }
       })
 
       const uri = new URL(result.uri)
@@ -494,7 +494,7 @@ describe('os-basemap route', () => {
         method: 'POST',
         params: { path: 'wmts' },
         query: { REQUEST: 'GetTile' },
-        url: { pathname: '/proxy/basemap/wmts', search: '?REQUEST=GetTile' }
+        url: { pathname: '/basemap/wmts', search: '?REQUEST=GetTile' }
       })
 
       expect(result.uri).toBeDefined()
