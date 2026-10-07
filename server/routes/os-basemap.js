@@ -57,7 +57,7 @@ const buildBasemapUri = async (request) => {
 
 module.exports = {
   method: ['GET', 'POST'],
-  path: '/proxy/basemap/{path*}',
+  path: '/basemap/{path*}',
   options: {
     description: 'Proxy OS basemap requests while keeping the provider path hidden behind the app proxy',
     auth: false,

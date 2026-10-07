@@ -47,7 +47,7 @@ describe('esri-tiles-proxy route', () => {
         token: 'browser-token'
       },
       url: {
-        pathname: '/proxy/esri-tiles/style/tiles/vec/0/0/0.pbf',
+        pathname: '/esri-tiles/style/tiles/vec/0/0/0.pbf',
         search: '?token=browser-token'
       }
     })
