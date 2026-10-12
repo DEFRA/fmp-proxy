@@ -25,8 +25,3 @@ jobs:
             
       - name: Run unit tests
         run: npm run test
-
-      - name: Set Timezone
-        uses: szenius/set-timezone@v2.0
-        with:
-          timezoneLinux: "Europe/London"
