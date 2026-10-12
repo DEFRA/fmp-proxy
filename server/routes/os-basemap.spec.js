@@ -1,24 +1,7 @@
+const { setupOsRouteTests } = require('./os-routes-test-setup')
+
 describe('os-basemap route', () => {
-  const originalEnv = process.env
-
-  beforeEach(() => {
-    jest.resetModules()
-    process.env = {
-      ...originalEnv,
-      FMPPROXYPORT: '8060',
-      ordnanceSurveyOsGetCapabilitiesUrl: 'https://api.os.uk/maps/raster/v1/wmts',
-      ordnanceSurveyOsMapsUrl: 'https://api.os.uk/maps/vector/v1/vts',
-      ordnanceSurveyOsSearchKey: 'test-os-search-key',
-      ordnanceSurveyOsClientId: 'os-client-id',
-      ordnanceSurveyOsClientSecret: 'os-client-secret',
-      OS_TOKEN_URL: 'https://api.os.uk/oauth2/token/v1'
-    }
-  })
-
-  afterEach(() => {
-    process.env = originalEnv
-    jest.restoreAllMocks()
-  })
+  setupOsRouteTests()
 
   describe('route configuration', () => {
     it('has correct HTTP methods', () => {
