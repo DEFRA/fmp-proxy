@@ -1,11 +1,12 @@
 describe('proxyDebug', () => {
   const originalEnv = process.env
-  const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
+  const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
+  const dirSpy = jest.spyOn(console, 'dir').mockImplementation(() => {})
 
   beforeEach(() => {
     process.env = { ...originalEnv }
     jest.resetModules()
-    consoleSpy.mockClear()
+    logSpy.mockClear()
   })
 
   afterEach(() => {
@@ -19,8 +20,9 @@ describe('proxyDebug', () => {
 
     logDebug('hello world', { status: 'ok' })
     logDebug('plain message')
-    expect(consoleSpy).toHaveBeenNthCalledWith(1, '[proxy-debug] hello world {"status":"ok"}')
-    expect(consoleSpy).toHaveBeenNthCalledWith(2, '[proxy-debug] plain message')
+    expect(logSpy).toHaveBeenNthCalledWith(1, 'hello world')
+    expect(logSpy).toHaveBeenNthCalledWith(3, 'plain message')
+    expect(dirSpy).toHaveBeenNthCalledWith(1, { status: 'ok' }, { depth: null })
   })
 
   it('Wont log messages when debug is disabled', async () => {
@@ -29,6 +31,6 @@ describe('proxyDebug', () => {
 
     logDebug('hello world', { status: 'ok' })
     logDebug('plain message')
-    expect(consoleSpy).not.toHaveBeenCalled()
+    expect(logSpy).not.toHaveBeenCalled()
   })
 })

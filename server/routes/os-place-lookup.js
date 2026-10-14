@@ -10,11 +10,9 @@ const buildMapUri = async (request) => {
   const placeName = request.params?.placeName
   const upstreamUri = `${OS_API_BASE}${PATH}?query=${placeName}&${osNamesParameters}`
 
-  logDebug('os lookup request received', {
+  logDebug('/place-lookup: ', {
     method: request.method,
     requestUrl: request.url.href,
-  })
-  logDebug('os lookup upstream resolved', {
     upstreamUrl: upstreamUri,
   })
 
