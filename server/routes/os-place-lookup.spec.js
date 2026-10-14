@@ -1,7 +1,41 @@
 const { setupOsRouteTests } = require('./os-routes-test-setup')
+const osNamesParameters = 'fq=local_type:postcode%20local_type:hamlet%20local_type:village%20local_type:town%20local_type:city%20local_type:suburban_area%20local_type:other_settlement&maxresults=100'
 
 describe('os-place-lookup route', () => {
   setupOsRouteTests()
+
+  let server
+  let wreckRequestMock
+
+  beforeEach(async () => {
+    const { PassThrough } = require('stream')
+    wreckRequestMock = jest.fn().mockImplementation(async () => {
+      const upstreamResponse = new PassThrough()
+      upstreamResponse.statusCode = 200
+      upstreamResponse.headers = { 'content-type': 'application/json' }
+      upstreamResponse.end('{}')
+      return upstreamResponse
+    })
+
+    jest.doMock('@hapi/wreck', () => ({
+      request: wreckRequestMock,
+      parseCacheControl: jest.fn()
+    }))
+    jest.doMock('../services/proxyDebug', () => ({
+      logDebug: jest.fn()
+    }))
+    jest.doMock('../services/getOsToken', () => ({
+      getOsToken: jest.fn().mockResolvedValue({ access_token: 'token' })
+    }))
+
+    server = require('@hapi/hapi').server()
+    await server.register(require('@hapi/h2o2'))
+    server.route(require('./os-place-lookup'))
+  })
+
+  afterEach(async () => {
+    await server.stop()
+  })
 
   describe('route configuration', () => {
     it('has correct HTTP methods', () => {
@@ -11,7 +45,7 @@ describe('os-place-lookup route', () => {
 
     it('has correct path with query parameter', () => {
       const route = require('./os-place-lookup')
-      expect(route.path).toBe('/place-lookup/{query}')
+      expect(route.path).toBe('/place-lookup/{placeName}')
     })
 
     it('disables authentication', () => {
@@ -33,28 +67,18 @@ describe('os-place-lookup route', () => {
   })
 
   describe('upstream URL construction', () => {
-    it('constructs correct OS API endpoint with query parameter', async () => {
-      const logDebugMock = jest.fn()
-      const getOsTokenMock = jest.fn().mockResolvedValue({ access_token: 'token' })
-
-      jest.doMock('../services/proxyDebug', () => ({
-        logDebug: logDebugMock
-      }))
-      jest.doMock('../services/getOsToken', () => ({
-        getOsToken: getOsTokenMock
-      }))
-
-      const route = require('./os-place-lookup')
-      const result = await route.options.handler.proxy.mapUri({
+    it('proxies a GET request to the expected OS API url', async () => {
+      const response = await server.inject({
         method: 'GET',
-        params: { query: 'London' },
-        url: {
-          href: 'http://localhost:3005/place-lookup/London'
-        }
+        url: 'http://localhost:3005/place-lookup/London'
       })
 
-      expect(result.uri).toContain('https://api.os.uk/search/names/v1/find')
-      expect(result.uri).toContain('query=London')
+      expect(response.statusCode).toBe(200)
+      expect(wreckRequestMock).toHaveBeenCalledTimes(1)
+      const [method, uri, options] = wreckRequestMock.mock.calls[0]
+      expect(method).toBe('get')
+      expect(uri).toEqual(`https://api.os.uk/search/names/v1/find?query=London&${osNamesParameters}`)
+      expect(options.headers.authorization).toBe('Bearer token')
     })
 
     it('includes place type filter in URL', async () => {
