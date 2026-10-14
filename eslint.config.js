@@ -8,5 +8,10 @@ module.exports = [
     ignores: [
       '**/coverage/'
     ]
-  })
+  }),
+  {
+    languageOptions: {
+      globals: { createMockServer: 'readonly' }
+    }
+  }
 ]

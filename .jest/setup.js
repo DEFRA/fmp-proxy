@@ -12,6 +12,10 @@ if (expect.getState().testPath.includes('/server/routes/')) {
     getOsToken: jest.fn().mockResolvedValue({ access_token: 'token' })
   }))
 
+  jest.doMock('../server/services/getEsriToken', () => ({
+    getEsriToken: jest.fn().mockResolvedValue({ token: 'server-esri-token' })
+  }))
+
   jest.doMock('@hapi/wreck', () => ({
     request: mockWreckRequest,
     parseCacheControl: jest.fn()
