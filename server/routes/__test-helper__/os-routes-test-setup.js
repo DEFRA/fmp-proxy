@@ -3,6 +3,9 @@
  * Configures environment variables and mocks required for testing OS API proxy routes
  */
 
+const mockServer = require('./createMockServer')
+const HTTP_STATUS_CODES = require('./HTTP_STATUS_CODES.json')
+
 const setupOsRouteTests = () => {
   const originalEnv = process.env
 
@@ -37,4 +40,8 @@ const setupOsRouteTests = () => {
   return originalEnv
 }
 
-module.exports = { setupOsRouteTests }
+module.exports = {
+  setupOsRouteTests,
+  createMockServer: mockServer.createMockServer,
+  HTTP_STATUS_CODES
+}

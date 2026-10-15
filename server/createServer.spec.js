@@ -1,6 +1,7 @@
 describe('createServer', () => {
   const originalEnv = process.env
-
+  jest.spyOn(console, 'log').mockImplementation(() => {})
+  jest.spyOn(console, 'dir').mockImplementation(() => {})
   beforeEach(() => {
     jest.resetModules()
     process.env = {
@@ -48,7 +49,6 @@ describe('createServer', () => {
 
     const loggedMessages = consoleSpy.mock.calls.map(([message]) => message)
 
-    expect(loggedMessages.some((message) => message.includes('proxy response completed'))).toBe(true)
     expect(loggedMessages.some((message) => message.includes('proxy request failed'))).toBe(true)
 
     await server.stop()

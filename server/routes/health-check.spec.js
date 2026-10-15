@@ -1,4 +1,8 @@
-const { setupOsRouteTests } = require('./os-routes-test-setup')
+const {
+  setupOsRouteTests,
+  createMockServer,
+  HTTP_STATUS_CODES
+} = require('./__test-helper__/os-routes-test-setup')
 
 describe('GET /health-check', () => {
   setupOsRouteTests()
@@ -8,7 +12,7 @@ describe('GET /health-check', () => {
 
     const response = await server.inject({ method: 'GET', url: '/health-check' })
 
-    expect(response.statusCode).toEqual(200)
+    expect(response.statusCode).toEqual(HTTP_STATUS_CODES.OK)
     expect(response.result).toEqual({ ok: true, service: 'fmp-proxy' })
 
     await server.stop()

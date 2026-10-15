@@ -1,4 +1,8 @@
-const { setupOsRouteTests } = require('./os-routes-test-setup')
+const {
+  setupOsRouteTests,
+  createMockServer,
+  HTTP_STATUS_CODES
+} = require('./__test-helper__/os-routes-test-setup')
 
 const osNamesParameters = 'fq=local_type:postcode%20local_type:hamlet%20local_type:village%20local_type:town%20local_type:city%20local_type:suburban_area%20local_type:other_settlement&maxresults=100'
 
@@ -36,7 +40,7 @@ describe('os-place-lookup route', () => {
       url: `http://localhost:3005/place-lookup/${placeName}`
     })
 
-    expect(response.statusCode).toBe(200)
+    expect(response.statusCode).toBe(HTTP_STATUS_CODES.OK)
     expectProxiedTo(expectedQuery)
   })
 
@@ -46,7 +50,7 @@ describe('os-place-lookup route', () => {
       url: 'http://localhost:3005/place-lookup/'
     })
 
-    expect(response.statusCode).toBe(404)
+    expect(response.statusCode).toBe(HTTP_STATUS_CODES.NOT_FOUND)
     expect(wreckRequestMock).not.toHaveBeenCalled()
   })
 })

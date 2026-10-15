@@ -22,14 +22,6 @@ const createServer = async () => {
 
   server.ext('onPreResponse', (request, h) => {
     const response = request.response
-    if (request.path.startsWith('/proxy/')) {
-      const statusCode = response?.output?.statusCode || response?.statusCode
-      logDebug('proxy response completed', {
-        method: request.method,
-        path: request.path,
-        statusCode
-      })
-    }
 
     if (response?.isBoom) {
       logDebug('proxy request failed', {

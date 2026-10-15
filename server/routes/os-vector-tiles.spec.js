@@ -1,4 +1,8 @@
-const { setupOsRouteTests } = require('./os-routes-test-setup')
+const {
+  setupOsRouteTests,
+  createMockServer,
+  HTTP_STATUS_CODES
+} = require('./__test-helper__/os-routes-test-setup')
 
 describe('os-vector-tiles route', () => {
   setupOsRouteTests()
@@ -16,7 +20,7 @@ describe('os-vector-tiles route', () => {
 
   const proxy = async (url, method = 'GET') => {
     const response = await server.inject({ method, url: `http://localhost:3005${url}` })
-    expect(response.statusCode).toBe(200)
+    expect(response.statusCode).toBe(HTTP_STATUS_CODES.OK)
     expect(wreckRequestMock).toHaveBeenCalledTimes(1)
     const [upstreamMethod, uri, options] = wreckRequestMock.mock.calls[0]
     return { upstreamMethod, upstream: new URL(uri), options }

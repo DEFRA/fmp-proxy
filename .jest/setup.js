@@ -1,4 +1,5 @@
 const { PassThrough } = require('stream')
+const mockServer = require('../server/routes/__test-helper__/createMockServer')
 
 // Global mocks apply to the route specs only
 if (expect.getState().testPath.includes('/server/routes/')) {
@@ -33,11 +34,5 @@ if (expect.getState().testPath.includes('/server/routes/')) {
     mockWreckRequest.mockReset().mockImplementation(upstreamOk)
   })
 
-  // Creates a hapi server with the given route(s); upstream calls go to the mocked wreck
-  global.createMockServer = async (...routes) => {
-    const server = require('@hapi/hapi').server()
-    await server.register(require('@hapi/h2o2'))
-    routes.forEach(route => server.route(route))
-    return { server, wreckRequestMock: mockWreckRequest }
-  }
+  mockServer.attach(mockWreckRequest)
 }
