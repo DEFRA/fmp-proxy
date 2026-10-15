@@ -47,6 +47,27 @@ node build/index.js
 
 `npm run build` uses webpack to bundle the service and its dependencies into `build/index.js`. The `build/` folder is not tracked by git. The bundle is self-contained, so `node_modules` is not needed at runtime. Environment variables (or a `.env` file in the working directory) are still required.
 
+## Docker
+
+```bash
+docker build -t fmp-proxy .
+docker run --rm -p 3005:3000 --env-file .env fmp-proxy
+```
+
+The image is built in two stages. The first runs webpack. The final image contains only `build/index.js` and runs `node build/index.js` as the `node` user. The container listens on port `3000` internally. `-p 3005:3000` publishes it on host port `3005`. `.env` is excluded from the image, so pass environment variables at runtime, for example with `--env-file`. `FMPPROXYPORT` is set to `3000` in the image, so leave it out of the env file or set it to `3000`.
+
+> **Note:** Docker's `--env-file` does not strip quotes the way `dotenv` does. A value such as `KEY='value'` or `KEY="value"` is passed to the container with the quotes included, which can fail config validation and stop the container at startup. Do not quote values in an env file used with Docker. Inline comments (`KEY=value # comment`) are also kept as part of the value.
+
+### Running on WSL with mirrored networking
+
+If Docker runs inside WSL2 (not Docker Desktop) and `.wslconfig` has `networkingMode=mirrored`, ports published with `-p` may not be reachable from a Windows browser. Run the container on the host network instead:
+
+```bash
+docker run --rm --network host --env-file .env fmp-proxy
+```
+
+With `--network host`, `-p` is ignored and the app listens directly on the port set by `FMPPROXYPORT` in `.env`, for example `3005`. Browse to `http://127.0.0.1:3005/health-check`. Use `127.0.0.1` rather than `localhost`, which may not reach WSL from Windows. This is only needed for local development on WSL. Deployments should use the normal `-p` port mapping.
+
 ## Test
 
 ```bash

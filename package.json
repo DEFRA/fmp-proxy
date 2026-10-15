@@ -8,7 +8,7 @@
   "scripts": {
     "start": "node build/index.js",
     "dev": "node index.js",
-    "build": "webpack && npm start",
+    "build": "webpack",
     "test": "npm run eslint && jest --runInBand --collectCoverage",
     "test-quick": "NOLOG=true jest --collectCoverage",
     "jest-watch": "NOLOG=true jest --watch",
