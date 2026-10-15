@@ -1,31 +1,15 @@
-const { setupOsRouteTests } = require('./os-routes-test-setup')
+const esriTestVariables = require('./__test-helper__/esri-test-helper')
 
 describe('esri-service route', () => {
-  setupOsRouteTests()
-
-  let server
-  let wreckRequestMock
-
-  beforeEach(async () => {
-    ({ server, wreckRequestMock } = await createMockServer(require('./esri-service')))
-  })
-
-  afterEach(async () => {
-    await server.stop()
-  })
-
   it('rewrites to the ESRI service, preserving query params and replacing the browser token', async () => {
+    const { server } = esriTestVariables
     const response = await server.inject({
       method: 'GET',
       url: 'http://localhost:3005/esri-service/FeatureServer/0/query?f=json&token=browser-token&outFields=OBJECTID'
     })
 
-    expect(response.statusCode).toBe(200)
-    expect(wreckRequestMock).toHaveBeenCalledTimes(1)
-    const [method, uri] = wreckRequestMock.mock.calls[0]
-    const upstream = new URL(uri)
+    const { upstream } = esriTestVariables.validateEsriRoute(response)
 
-    expect(method).toBe('get')
     expect(upstream.origin).toBe('https://services1.arcgis.com')
     expect(upstream.pathname).toBe('/test-service-id/arcgis/rest/services/FeatureServer/0/query')
     expect(upstream.searchParams.get('f')).toBe('json')
