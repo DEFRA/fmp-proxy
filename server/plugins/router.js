@@ -3,7 +3,6 @@ const routes = [].concat(
   require('../routes/esri-proxy'),
   require('../routes/esri-tiles-proxy'),
   require('../routes/os-place-lookup'),
-  require('../routes/os-basemap'),
   require('../routes/os-raster-tiles'),
   require('../routes/os-vector-tiles')
 )
