@@ -17,7 +17,7 @@ describe('esri-service route', () => {
   it('rewrites to the ESRI service, preserving query params and replacing the browser token', async () => {
     const response = await server.inject({
       method: 'GET',
-      url: 'http://localhost:3005/esri/FeatureServer/0/query?f=json&token=browser-token&outFields=OBJECTID'
+      url: 'http://localhost:3005/esri-service/FeatureServer/0/query?f=json&token=browser-token&outFields=OBJECTID'
     })
 
     expect(response.statusCode).toBe(200)

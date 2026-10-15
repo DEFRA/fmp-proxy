@@ -2,7 +2,7 @@ const { config } = require('../config')
 const { createEsriProxyRoute } = require('../services/createEsriProxyRoute')
 
 module.exports = createEsriProxyRoute({
-  path: '/esri/{path*}',
+  path: '/esri-service/{path*}',
   baseUrl: new URL(config.agol.serviceUrl),
   description: 'Proxy ESRI requests while injecting short-lived AGOL token server-side',
   logLabel: 'esri'
