@@ -4,6 +4,7 @@
  */
 
 const mockServer = require('./__test-helper__/createMockServer')
+const HTTP_STATUS_CODES = require('./__test-helper__/HTTP_STATUS_CODES.json')
 
 const setupOsRouteTests = () => {
   const originalEnv = process.env
@@ -41,5 +42,6 @@ const setupOsRouteTests = () => {
 
 module.exports = {
   setupOsRouteTests,
-  createMockServer: mockServer.createMockServer
+  createMockServer: mockServer.createMockServer,
+  HTTP_STATUS_CODES
 }

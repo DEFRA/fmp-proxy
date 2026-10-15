@@ -1,4 +1,8 @@
-const { setupOsRouteTests, createMockServer } = require('./os-routes-test-setup')
+const {
+  setupOsRouteTests,
+  createMockServer,
+  HTTP_STATUS_CODES
+} = require('./os-routes-test-setup')
 
 const tileQuery = 'SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&LAYER=Outdoor_27700&STYLE=default&FORMAT=image%2Fpng&TILEMATRIXSET=EPSG%3A27700&TILEMATRIX=EPSG%3A27700%3A10&TILEROW=5739&TILECOL=2832'
 
@@ -22,7 +26,7 @@ describe('os-raster-tiles route', () => {
       url: `http://localhost:3005/os-raster-tiles?${tileQuery}`
     })
 
-    expect(response.statusCode).toBe(200)
+    expect(response.statusCode).toBe(HTTP_STATUS_CODES.OK)
     expect(wreckRequestMock).toHaveBeenCalledTimes(1)
     const [method, uri, options] = wreckRequestMock.mock.calls[0]
     expect(method).toBe('get')
@@ -46,7 +50,7 @@ describe('os-raster-tiles route', () => {
       url: 'http://localhost:3005/os-raster-tiles/wmts'
     })
 
-    expect(response.statusCode).toBe(404)
+    expect(response.statusCode).toBe(HTTP_STATUS_CODES.NOT_FOUND)
     expect(wreckRequestMock).not.toHaveBeenCalled()
   })
 })

@@ -1,11 +1,15 @@
-const { setupOsRouteTests, createMockServer } = require('../os-routes-test-setup')
+const {
+  setupOsRouteTests,
+  createMockServer,
+  HTTP_STATUS_CODES
+} = require('../os-routes-test-setup')
 
 setupOsRouteTests()
 
 const validateEsriRoute = (response) => {
   const { wreckRequestMock } = esriTestVariables
 
-  expect(response.statusCode).toBe(200)
+  expect(response.statusCode).toBe(HTTP_STATUS_CODES.OK)
   expect(wreckRequestMock).toHaveBeenCalledTimes(1)
   const [method, uri] = wreckRequestMock.mock.calls[0]
   const upstream = new URL(uri)
