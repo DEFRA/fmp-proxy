@@ -2,7 +2,7 @@ const {
   setupOsRouteTests,
   createMockServer,
   HTTP_STATUS_CODES
-} = require('./os-routes-test-setup')
+} = require('./__test-helper__/os-routes-test-setup')
 
 describe('os-vector-tiles route', () => {
   setupOsRouteTests()

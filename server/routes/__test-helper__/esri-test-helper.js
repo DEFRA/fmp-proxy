@@ -2,7 +2,7 @@ const {
   setupOsRouteTests,
   createMockServer,
   HTTP_STATUS_CODES
-} = require('../os-routes-test-setup')
+} = require('./os-routes-test-setup')
 
 setupOsRouteTests()
 

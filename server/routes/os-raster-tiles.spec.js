@@ -2,7 +2,7 @@ const {
   setupOsRouteTests,
   createMockServer,
   HTTP_STATUS_CODES
-} = require('./os-routes-test-setup')
+} = require('./__test-helper__/os-routes-test-setup')
 
 const tileQuery = 'SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&LAYER=Outdoor_27700&STYLE=default&FORMAT=image%2Fpng&TILEMATRIXSET=EPSG%3A27700&TILEMATRIX=EPSG%3A27700%3A10&TILEROW=5739&TILECOL=2832'
 

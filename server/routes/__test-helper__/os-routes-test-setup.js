@@ -3,8 +3,8 @@
  * Configures environment variables and mocks required for testing OS API proxy routes
  */
 
-const mockServer = require('./__test-helper__/createMockServer')
-const HTTP_STATUS_CODES = require('./__test-helper__/HTTP_STATUS_CODES.json')
+const mockServer = require('./createMockServer')
+const HTTP_STATUS_CODES = require('./HTTP_STATUS_CODES.json')
 
 const setupOsRouteTests = () => {
   const originalEnv = process.env
