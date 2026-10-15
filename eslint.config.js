@@ -6,7 +6,8 @@ module.exports = [
   ...neostandard({
     env: ['jest', 'node'],
     ignores: [
-      '**/coverage/'
+      '**/coverage/',
+      '**/build/'
     ]
   }),
   {

@@ -38,6 +38,15 @@ npm start
 PROXY_DEBUG=true npm start
 ```
 
+## Production build
+
+```bash
+npm run build
+node build/index.js
+```
+
+`npm run build` uses webpack to bundle the service and its dependencies into `build/index.js`. The `build/` folder is not tracked by git. The bundle is self-contained, so `node_modules` is not needed at runtime. Environment variables (or a `.env` file in the working directory) are still required.
+
 ## Test
 
 ```bash

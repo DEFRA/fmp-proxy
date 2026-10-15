@@ -6,7 +6,9 @@
   "author": "defra",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node build/index.js",
+    "dev": "node index.js",
+    "build": "webpack && npm start",
     "test": "npm run eslint && jest --runInBand --collectCoverage",
     "test-quick": "NOLOG=true jest --collectCoverage",
     "jest-watch": "NOLOG=true jest --watch",
@@ -22,6 +24,8 @@
   "devDependencies": {
     "eslint": "^9.39.2",
     "jest": "^30.2.0",
-    "neostandard": "^0.12.2"
+    "neostandard": "^0.12.2",
+    "webpack": "5.104.1",
+    "webpack-cli": "6.0.1"
   }
 }
