@@ -4,10 +4,8 @@ const { config } = require('../config')
 
 const OS_RASTER_WMTS_URL = 'https://api.os.uk/maps/raster/v1/wmts'
 
-const ROUTE_PATH = '/os-raster-tiles'
-
-const buildUpstreamUri = async (request, upstreamPath) => {
-  const wmtsUrl = new URL(`${OS_RASTER_WMTS_URL}${upstreamPath}`)
+const buildRasterTilesUri = async (request) => {
+  const wmtsUrl = new URL(OS_RASTER_WMTS_URL)
   wmtsUrl.search = request.url.search
 
   // The key is always supplied server-side
@@ -25,36 +23,17 @@ const buildUpstreamUri = async (request, upstreamPath) => {
   }
 }
 
-const buildRasterTilesUri = (request) => buildUpstreamUri(request, '')
-
-// Keeps the raw (still encoded) path below the route
-const buildRasterTilesPathUri = (request) =>
-  buildUpstreamUri(request, request.url.pathname.slice(ROUTE_PATH.length).replace(/\/+$/, ''))
-
-const createRoute = (path, mapUri, description) => ({
+module.exports = {
   method: ['GET', 'POST'],
-  path,
+  path: '/os-raster-tiles',
   options: {
-    description,
+    description: 'Proxy OS raster tile (WMTS) requests while keeping the provider path hidden behind the app proxy',
     auth: false,
     handler: {
       proxy: {
         passThrough: true,
-        mapUri
+        mapUri: buildRasterTilesUri
       }
     }
   }
-})
-
-module.exports = [
-  createRoute(
-    ROUTE_PATH,
-    buildRasterTilesUri,
-    'Proxy OS raster tile (WMTS) requests while keeping the provider path hidden behind the app proxy'
-  ),
-  createRoute(
-    `${ROUTE_PATH}/{path*}`,
-    buildRasterTilesPathUri,
-    'Proxy OS raster tile (WMTS) requests, forwarding the path below the route, while keeping the provider path hidden behind the app proxy'
-  )
-]
+}
