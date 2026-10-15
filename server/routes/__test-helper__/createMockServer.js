@@ -5,11 +5,10 @@ const attach = (mockWreckRequest) => {
     routes.forEach(route => server.route(route))
     return { server, wreckRequestMock: mockWreckRequest }
   }
-  // global.createMockServer = mockServer.createMockServer
 }
 
 const mockServer = {
-  createMockServer: () => {},
+  createMockServer: async () => {},
   attach
 }
 
