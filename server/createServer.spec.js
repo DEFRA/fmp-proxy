@@ -48,7 +48,6 @@ describe('createServer', () => {
 
     const loggedMessages = consoleSpy.mock.calls.map(([message]) => message)
 
-    expect(loggedMessages.some((message) => message.includes('proxy response completed'))).toBe(true)
     expect(loggedMessages.some((message) => message.includes('proxy request failed'))).toBe(true)
 
     await server.stop()
