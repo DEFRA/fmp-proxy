@@ -71,15 +71,22 @@ describe('os-basemap route', () => {
   })
 
   describe('vector requests', () => {
-    it('rewrites the path to the OS api root', async () => {
-      const { upstream, options } = await proxy('/basemap/styles/road.json')
+    it('does not proxy a request without a path', async () => {
+      const response = await server.inject({ method: 'GET', url: 'http://localhost:3005/basemap' })
 
-      expect(upstream.origin + upstream.pathname).toBe('https://api.os.uk/styles/road.json')
+      expect(response.statusCode).toBe(404)
+      expect(wreckRequestMock).not.toHaveBeenCalled()
+    })
+
+    it('rewrites the path to the OS api root', async () => {
+      const { upstream, options } = await proxy('/basemap/road.json')
+
+      expect(upstream.origin + upstream.pathname).toBe('https://api.os.uk/road.json')
       expect(options.headers.authorization).toMatch(/token$/)
     })
 
     it('strips type and target and forwards other params', async () => {
-      const { upstream } = await proxy('/basemap/styles/road.json?type=vector&target=/maps/vector/v1/vts&epsg=27700&slds=true')
+      const { upstream } = await proxy('/basemap/road.json?type=vector&target=/maps/vector/v1/vts&epsg=27700&slds=true')
 
       expect(upstream.searchParams.has('type')).toBe(false)
       expect(upstream.searchParams.has('target')).toBe(false)
