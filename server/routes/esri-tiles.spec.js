@@ -1,13 +1,13 @@
 const { setupOsRouteTests } = require('./os-routes-test-setup')
 
-describe('esri-tiles-proxy route', () => {
+describe('esri-tiles route', () => {
   setupOsRouteTests()
 
   let server
   let wreckRequestMock
 
   beforeEach(async () => {
-    ({ server, wreckRequestMock } = await createMockServer(require('./esri-tiles-proxy')))
+    ({ server, wreckRequestMock } = await createMockServer(require('./esri-tiles')))
   })
 
   afterEach(async () => {

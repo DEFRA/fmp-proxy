@@ -1,6 +1,6 @@
 const { setupOsRouteTests } = require('./os-routes-test-setup')
 
-describe('esri-proxy route', () => {
+describe('esri-service route', () => {
   setupOsRouteTests()
 
   let server

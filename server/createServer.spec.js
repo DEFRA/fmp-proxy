@@ -1,6 +1,7 @@
 describe('createServer', () => {
   const originalEnv = process.env
-
+  jest.spyOn(console, 'log').mockImplementation(() => {})
+  jest.spyOn(console, 'dir').mockImplementation(() => {})
   beforeEach(() => {
     jest.resetModules()
     process.env = {
