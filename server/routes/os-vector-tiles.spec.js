@@ -1,4 +1,4 @@
-const { setupOsRouteTests } = require('./os-routes-test-setup')
+const { setupOsRouteTests, createMockServer } = require('./os-routes-test-setup')
 
 describe('os-vector-tiles route', () => {
   setupOsRouteTests()
