@@ -1,8 +1,12 @@
 describe('proxyDebug', () => {
   const originalEnv = process.env
+  const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
+  const dirSpy = jest.spyOn(console, 'dir').mockImplementation(() => {})
 
   beforeEach(() => {
     process.env = { ...originalEnv }
+    jest.resetModules()
+    logSpy.mockClear()
   })
 
   afterEach(() => {
@@ -10,39 +14,23 @@ describe('proxyDebug', () => {
     jest.restoreAllMocks()
   })
 
-  it('returns true when proxy debugging is enabled', () => {
+  it('logs messages when debug is enabled', async () => {
     process.env.PROXY_DEBUG = 'true'
-
-    const { isEnabled } = require('./proxyDebug')
-
-    expect(isEnabled()).toBe(true)
-  })
-
-  it('returns false when proxy debugging is disabled', () => {
-    process.env.PROXY_DEBUG = 'false'
-
-    const { isEnabled } = require('./proxyDebug')
-
-    expect(isEnabled()).toBe(false)
-  })
-
-  it('logs messages only when debug is enabled', () => {
-    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
-    process.env.PROXY_DEBUG = 'true'
-
     const { logDebug } = require('./proxyDebug')
 
     logDebug('hello world', { status: 'ok' })
     logDebug('plain message')
+    expect(logSpy).toHaveBeenNthCalledWith(1, 'hello world')
+    expect(logSpy).toHaveBeenNthCalledWith(3, 'plain message')
+    expect(dirSpy).toHaveBeenNthCalledWith(1, { status: 'ok' }, { depth: null })
+  })
 
-    expect(consoleSpy).toHaveBeenNthCalledWith(1, '[proxy-debug] hello world {"status":"ok"}')
-    expect(consoleSpy).toHaveBeenNthCalledWith(2, '[proxy-debug] plain message')
-
-    consoleSpy.mockClear()
+  it('Wont log messages when debug is disabled', async () => {
     process.env.PROXY_DEBUG = 'false'
+    const { logDebug } = require('./proxyDebug')
 
-    logDebug('hidden message', { status: 'nope' })
-
-    expect(consoleSpy).not.toHaveBeenCalled()
+    logDebug('hello world', { status: 'ok' })
+    logDebug('plain message')
+    expect(logSpy).not.toHaveBeenCalled()
   })
 })

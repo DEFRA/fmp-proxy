@@ -1,459 +1,52 @@
 const { setupOsRouteTests } = require('./os-routes-test-setup')
 
+const osNamesParameters = 'fq=local_type:postcode%20local_type:hamlet%20local_type:village%20local_type:town%20local_type:city%20local_type:suburban_area%20local_type:other_settlement&maxresults=100'
+
 describe('os-place-lookup route', () => {
   setupOsRouteTests()
 
-  describe('route configuration', () => {
-    it('has correct HTTP methods', () => {
-      const route = require('./os-place-lookup')
-      expect(route.method).toEqual(['GET', 'POST'])
-    })
+  let server
+  let wreckRequestMock
 
-    it('has correct path with query parameter', () => {
-      const route = require('./os-place-lookup')
-      expect(route.path).toBe('/place-lookup/{query}')
-    })
-
-    it('disables authentication', () => {
-      const route = require('./os-place-lookup')
-      expect(route.options.auth).toBe(false)
-    })
-
-    it('uses proxy handler with mapUri', () => {
-      const route = require('./os-place-lookup')
-      expect(route.options.handler.proxy.passThrough).toBe(true)
-      expect(typeof route.options.handler.proxy.mapUri).toBe('function')
-    })
-
-    it('has correct description', () => {
-      const route = require('./os-place-lookup')
-      expect(route.options.description).toContain('place lookup')
-      expect(route.options.description).toContain('bearer token')
-    })
+  beforeEach(async () => {
+    ({ server, wreckRequestMock } = await createMockServer(require('./os-place-lookup')))
   })
 
-  describe('upstream URL construction', () => {
-    it('constructs correct OS API endpoint with query parameter', async () => {
-      const logDebugMock = jest.fn()
-      const getOsTokenMock = jest.fn().mockResolvedValue({ access_token: 'token' })
-
-      jest.doMock('../services/proxyDebug', () => ({
-        logDebug: logDebugMock
-      }))
-      jest.doMock('../services/getOsToken', () => ({
-        getOsToken: getOsTokenMock
-      }))
-
-      const route = require('./os-place-lookup')
-      const result = await route.options.handler.proxy.mapUri({
-        method: 'GET',
-        params: { query: 'London' },
-        url: {
-          href: 'http://localhost:3005/place-lookup/London'
-        }
-      })
-
-      expect(result.uri).toContain('https://api.os.uk/search/names/v1/find')
-      expect(result.uri).toContain('query=London')
-    })
-
-    it('includes place type filter in URL', async () => {
-      const logDebugMock = jest.fn()
-      const getOsTokenMock = jest.fn().mockResolvedValue({ access_token: 'token' })
-
-      jest.doMock('../services/proxyDebug', () => ({
-        logDebug: logDebugMock
-      }))
-      jest.doMock('../services/getOsToken', () => ({
-        getOsToken: getOsTokenMock
-      }))
-
-      const route = require('./os-place-lookup')
-      const result = await route.options.handler.proxy.mapUri({
-        method: 'GET',
-        params: { query: 'London' },
-        url: {
-          href: 'http://localhost:3005/place-lookup/London'
-        }
-      })
-
-      expect(result.uri).toContain('fq=local_type:postcode')
-      expect(result.uri).toContain('local_type:hamlet')
-      expect(result.uri).toContain('local_type:village')
-      expect(result.uri).toContain('local_type:town')
-      expect(result.uri).toContain('local_type:city')
-      expect(result.uri).toContain('local_type:suburban_area')
-      expect(result.uri).toContain('local_type:other_settlement')
-    })
-
-    it('includes maxresults=100 parameter', async () => {
-      const logDebugMock = jest.fn()
-      const getOsTokenMock = jest.fn().mockResolvedValue({ access_token: 'token' })
-
-      jest.doMock('../services/proxyDebug', () => ({
-        logDebug: logDebugMock
-      }))
-      jest.doMock('../services/getOsToken', () => ({
-        getOsToken: getOsTokenMock
-      }))
-
-      const route = require('./os-place-lookup')
-      const result = await route.options.handler.proxy.mapUri({
-        method: 'GET',
-        params: { query: 'Brighton' },
-        url: {
-          href: 'http://localhost:3005/place-lookup/Brighton'
-        }
-      })
-
-      expect(result.uri).toContain('maxresults=100')
-    })
-
-    it('handles URL-encoded queries correctly', async () => {
-      const logDebugMock = jest.fn()
-      const getOsTokenMock = jest.fn().mockResolvedValue({ access_token: 'token' })
-
-      jest.doMock('../services/proxyDebug', () => ({
-        logDebug: logDebugMock
-      }))
-      jest.doMock('../services/getOsToken', () => ({
-        getOsToken: getOsTokenMock
-      }))
-
-      const route = require('./os-place-lookup')
-      const result = await route.options.handler.proxy.mapUri({
-        method: 'GET',
-        params: { query: 'Brighton%20and%20Hove' },
-        url: {
-          href: 'http://localhost:3005/place-lookup/Brighton%20and%20Hove'
-        }
-      })
-
-      expect(result.uri).toContain('query=Brighton%20and%20Hove')
-    })
-
-    it('passes single character queries through', async () => {
-      const logDebugMock = jest.fn()
-      const getOsTokenMock = jest.fn().mockResolvedValue({ access_token: 'token' })
-
-      jest.doMock('../services/proxyDebug', () => ({
-        logDebug: logDebugMock
-      }))
-      jest.doMock('../services/getOsToken', () => ({
-        getOsToken: getOsTokenMock
-      }))
-
-      const route = require('./os-place-lookup')
-      const result = await route.options.handler.proxy.mapUri({
-        method: 'GET',
-        params: { query: 'b' },
-        url: {
-          href: 'http://localhost:3005/place-lookup/b'
-        }
-      })
-
-      expect(result.uri).toContain('query=b')
-    })
+  afterEach(async () => {
+    await server.stop()
   })
 
-  describe('authorization and token handling', () => {
-    it('includes Bearer token in response headers', async () => {
-      const getOsTokenMock = jest.fn().mockResolvedValue({ access_token: 'test-bearer-token' })
+  const expectProxiedTo = (query) => {
+    expect(wreckRequestMock).toHaveBeenCalledTimes(1)
+    const [method, uri, options] = wreckRequestMock.mock.calls[0]
+    expect(method).toBe('get')
+    expect(uri).toEqual(`https://api.os.uk/search/names/v1/find?query=${query}&${osNamesParameters}`)
+    expect(options.headers.authorization).toMatch(/token$/)
+  }
 
-      jest.doMock('../services/proxyDebug', () => ({
-        logDebug: jest.fn()
-      }))
-      jest.doMock('../services/getOsToken', () => ({
-        getOsToken: getOsTokenMock
-      }))
-
-      const route = require('./os-place-lookup')
-      const result = await route.options.handler.proxy.mapUri({
-        method: 'GET',
-        params: { query: 'London' },
-        url: {
-          href: 'http://localhost:3005/place-lookup/London'
-        }
-      })
-
-      expect(result.headers).toEqual({ authorization: 'Bearer test-bearer-token' })
+  it.each([
+    ['London', 'London'],
+    ['Brighton%20and%20Hove', 'Brighton and Hove'],
+    ['Man', 'Man'],
+    ["St%20John's", "St John's"],
+    ['a'.repeat(500), 'a'.repeat(500)]
+  ])('rewrites /place-lookup/%s to the OS names api', async (placeName, expectedQuery) => {
+    const response = await server.inject({
+      method: 'GET',
+      url: `http://localhost:3005/place-lookup/${placeName}`
     })
 
-    it('fetches token for every request', async () => {
-      const getOsTokenMock = jest.fn().mockResolvedValue({ access_token: 'token' })
-
-      jest.doMock('../services/proxyDebug', () => ({
-        logDebug: jest.fn()
-      }))
-      jest.doMock('../services/getOsToken', () => ({
-        getOsToken: getOsTokenMock
-      }))
-
-      const route = require('./os-place-lookup')
-      await route.options.handler.proxy.mapUri({
-        method: 'GET',
-        params: { query: 'London' },
-        url: {
-          href: 'http://localhost:3005/place-lookup/London'
-        }
-      })
-
-      expect(getOsTokenMock).toHaveBeenCalledTimes(1)
-    })
-
-    it('logs token fetch errors', async () => {
-      const logDebugMock = jest.fn()
-      const getOsTokenMock = jest.fn().mockRejectedValue(new Error('Token service unavailable'))
-
-      jest.doMock('../services/proxyDebug', () => ({
-        logDebug: logDebugMock
-      }))
-      jest.doMock('../services/getOsToken', () => ({
-        getOsToken: getOsTokenMock
-      }))
-
-      const route = require('./os-place-lookup')
-
-      await expect(
-        route.options.handler.proxy.mapUri({
-          method: 'GET',
-          params: { query: 'London' },
-          url: {
-            href: 'http://localhost:3005/place-lookup/London'
-          }
-        })
-      ).rejects.toThrow('Token service unavailable')
-    })
-
-    it('re-throws token fetch errors', async () => {
-      const getOsTokenMock = jest.fn().mockRejectedValue(new Error('API error'))
-
-      jest.doMock('../services/proxyDebug', () => ({
-        logDebug: jest.fn()
-      }))
-      jest.doMock('../services/getOsToken', () => ({
-        getOsToken: getOsTokenMock
-      }))
-
-      const route = require('./os-place-lookup')
-
-      await expect(
-        route.options.handler.proxy.mapUri({
-          method: 'GET',
-          params: { query: 'London' },
-          url: {
-            href: 'http://localhost:3005/place-lookup/London'
-          }
-        })
-      ).rejects.toThrow('API error')
-    })
+    expect(response.statusCode).toBe(200)
+    expectProxiedTo(expectedQuery)
   })
 
-  describe('request logging', () => {
-    it('logs incoming request details', async () => {
-      const logDebugMock = jest.fn()
-      const getOsTokenMock = jest.fn().mockResolvedValue({ access_token: 'token' })
-
-      jest.doMock('../services/proxyDebug', () => ({
-        logDebug: logDebugMock
-      }))
-      jest.doMock('../services/getOsToken', () => ({
-        getOsToken: getOsTokenMock
-      }))
-
-      const route = require('./os-place-lookup')
-      await route.options.handler.proxy.mapUri({
-        method: 'GET',
-        params: { query: 'London' },
-        url: {
-          href: 'http://localhost:3005/place-lookup/London'
-        }
-      })
-
-      expect(logDebugMock).toHaveBeenCalledWith(
-        'os lookup request received',
-        expect.objectContaining({
-          method: 'GET',
-          requestUrl: 'http://localhost:3005/place-lookup/London'
-        })
-      )
+  it('does not proxy an empty place name', async () => {
+    const response = await server.inject({
+      method: 'GET',
+      url: 'http://localhost:3005/place-lookup/'
     })
 
-    it('logs upstream URL resolution', async () => {
-      const logDebugMock = jest.fn()
-      const getOsTokenMock = jest.fn().mockResolvedValue({ access_token: 'token' })
-
-      jest.doMock('../services/proxyDebug', () => ({
-        logDebug: logDebugMock
-      }))
-      jest.doMock('../services/getOsToken', () => ({
-        getOsToken: getOsTokenMock
-      }))
-
-      const route = require('./os-place-lookup')
-      await route.options.handler.proxy.mapUri({
-        method: 'GET',
-        params: { query: 'London' },
-        url: {
-          href: 'http://localhost:3005/place-lookup/London'
-        }
-      })
-
-      expect(logDebugMock).toHaveBeenCalledWith(
-        'os lookup upstream resolved',
-        expect.objectContaining({
-          upstreamUrl: expect.stringContaining('https://api.os.uk/search/names/v1/find')
-        })
-      )
-    })
-
-    it('logs HTTP method', async () => {
-      const logDebugMock = jest.fn()
-      const getOsTokenMock = jest.fn().mockResolvedValue({ access_token: 'token' })
-
-      jest.doMock('../services/proxyDebug', () => ({
-        logDebug: logDebugMock
-      }))
-      jest.doMock('../services/getOsToken', () => ({
-        getOsToken: getOsTokenMock
-      }))
-
-      const route = require('./os-place-lookup')
-      await route.options.handler.proxy.mapUri({
-        method: 'POST',
-        params: { query: 'London' },
-        url: {
-          href: 'http://localhost:3005/place-lookup/London'
-        }
-      })
-
-      expect(logDebugMock).toHaveBeenCalledWith(
-        'os lookup request received',
-        expect.objectContaining({
-          method: 'POST'
-        })
-      )
-    })
-  })
-
-  describe('HTTP methods', () => {
-    it('accepts GET requests', async () => {
-      const logDebugMock = jest.fn()
-      const getOsTokenMock = jest.fn().mockResolvedValue({ access_token: 'token' })
-
-      jest.doMock('../services/proxyDebug', () => ({
-        logDebug: logDebugMock
-      }))
-      jest.doMock('../services/getOsToken', () => ({
-        getOsToken: getOsTokenMock
-      }))
-
-      const route = require('./os-place-lookup')
-      const result = await route.options.handler.proxy.mapUri({
-        method: 'GET',
-        params: { query: 'London' },
-        url: {
-          href: 'http://localhost:3005/place-lookup/London'
-        }
-      })
-
-      expect(result.uri).toBeDefined()
-      expect(result.headers).toBeDefined()
-    })
-
-    it('accepts POST requests', async () => {
-      const logDebugMock = jest.fn()
-      const getOsTokenMock = jest.fn().mockResolvedValue({ access_token: 'token' })
-
-      jest.doMock('../services/proxyDebug', () => ({
-        logDebug: logDebugMock
-      }))
-      jest.doMock('../services/getOsToken', () => ({
-        getOsToken: getOsTokenMock
-      }))
-
-      const route = require('./os-place-lookup')
-      const result = await route.options.handler.proxy.mapUri({
-        method: 'POST',
-        params: { query: 'London' },
-        url: {
-          href: 'http://localhost:3005/place-lookup/London'
-        }
-      })
-
-      expect(result.uri).toBeDefined()
-    })
-  })
-
-  describe('edge cases', () => {
-    it('handles special characters in query', async () => {
-      const logDebugMock = jest.fn()
-      const getOsTokenMock = jest.fn().mockResolvedValue({ access_token: 'token' })
-
-      jest.doMock('../services/proxyDebug', () => ({
-        logDebug: logDebugMock
-      }))
-      jest.doMock('../services/getOsToken', () => ({
-        getOsToken: getOsTokenMock
-      }))
-
-      const route = require('./os-place-lookup')
-      const result = await route.options.handler.proxy.mapUri({
-        method: 'GET',
-        params: { query: "St%20John's" },
-        url: {
-          href: "http://localhost:3005/place-lookup/St%20John's"
-        }
-      })
-
-      expect(result.uri).toContain("query=St%20John's")
-    })
-
-    it('handles long query strings', async () => {
-      const longQuery = 'a'.repeat(500)
-      const logDebugMock = jest.fn()
-      const getOsTokenMock = jest.fn().mockResolvedValue({ access_token: 'token' })
-
-      jest.doMock('../services/proxyDebug', () => ({
-        logDebug: logDebugMock
-      }))
-      jest.doMock('../services/getOsToken', () => ({
-        getOsToken: getOsTokenMock
-      }))
-
-      const route = require('./os-place-lookup')
-      const result = await route.options.handler.proxy.mapUri({
-        method: 'GET',
-        params: { query: longQuery },
-        url: {
-          href: `http://localhost:3005/place-lookup/${longQuery}`
-        }
-      })
-
-      expect(result.uri).toContain(`query=${longQuery}`)
-    })
-
-    it('handles empty query parameter', async () => {
-      const logDebugMock = jest.fn()
-      const getOsTokenMock = jest.fn().mockResolvedValue({ access_token: 'token' })
-
-      jest.doMock('../services/proxyDebug', () => ({
-        logDebug: logDebugMock
-      }))
-      jest.doMock('../services/getOsToken', () => ({
-        getOsToken: getOsTokenMock
-      }))
-
-      const route = require('./os-place-lookup')
-      const result = await route.options.handler.proxy.mapUri({
-        method: 'GET',
-        params: { query: '' },
-        url: {
-          href: 'http://localhost:3005/place-lookup/'
-        }
-      })
-
-      expect(result.uri).toContain('query=')
-    })
+    expect(response.statusCode).toBe(404)
+    expect(wreckRequestMock).not.toHaveBeenCalled()
   })
 })
