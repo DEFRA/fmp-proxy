@@ -7,7 +7,7 @@ describe('esri-proxy route', () => {
   let wreckRequestMock
 
   beforeEach(async () => {
-    ({ server, wreckRequestMock } = await createMockServer(require('./esri-proxy')))
+    ({ server, wreckRequestMock } = await createMockServer(require('./esri-service')))
   })
 
   afterEach(async () => {
