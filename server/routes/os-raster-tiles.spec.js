@@ -40,13 +40,27 @@ describe('os-raster-tiles route', () => {
     expect(uri).toBe('https://api.os.uk/maps/raster/v1/wmts?REQUEST=GetTile&key=test-os-search-key')
   })
 
-  it('does not proxy paths below the route', async () => {
+  it('forwards the path below the route and the query string', async () => {
     const response = await server.inject({
       method: 'GET',
-      url: 'http://localhost:3005/os-raster-tiles/wmts'
+      url: 'http://localhost:3005/os-raster-tiles/1.0.0/Outdoor_27700/10/2832/5739.png?format=image%2Fpng'
     })
 
-    expect(response.statusCode).toBe(404)
-    expect(wreckRequestMock).not.toHaveBeenCalled()
+    expect(response.statusCode).toBe(200)
+    expect(wreckRequestMock).toHaveBeenCalledTimes(1)
+    const [method, uri, options] = wreckRequestMock.mock.calls[0]
+    expect(method).toBe('get')
+    expect(uri).toBe('https://api.os.uk/maps/raster/v1/wmts/1.0.0/Outdoor_27700/10/2832/5739.png?format=image%2Fpng&key=test-os-search-key')
+    expect(options.headers.authorization).toMatch(/token$/)
+  })
+
+  it('adds the server key when the path request has no query string', async () => {
+    await server.inject({
+      method: 'GET',
+      url: 'http://localhost:3005/os-raster-tiles/1.0.0/WMTSCapabilities.xml'
+    })
+
+    const [, uri] = wreckRequestMock.mock.calls[0]
+    expect(uri).toBe('https://api.os.uk/maps/raster/v1/wmts/1.0.0/WMTSCapabilities.xml?key=test-os-search-key')
   })
 })
