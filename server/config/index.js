@@ -38,8 +38,8 @@ const buildConfig = (env = process.env) => {
       clientId: env.agolClientId,
       clientSecret: env.agolClientSecret,
       serviceId: agolServiceId,
-      serviceUrl: `https://services1.arcgis.com/${agolServiceId}/arcgis/rest/services`,
-      vectorTileUrl: `https://tiles.arcgis.com/tiles/${agolServiceId}/arcgis/rest/services`,
+      serviceUrl: `https://services1.arcgis.com/${agolServiceId}/arcgis/rest/services/`,
+      vectorTileUrl: `https://tiles.arcgis.com/tiles/${agolServiceId}/arcgis/rest/services/`,
       tokenDurationInMinutes: env.ESRI_TOKEN_DURATION_MINUTES
     },
     ordnanceSurvey: {

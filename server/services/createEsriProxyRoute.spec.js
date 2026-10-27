@@ -54,7 +54,7 @@ describe('createEsriProxyRoute', () => {
     const { createEsriProxyRoute } = require('./createEsriProxyRoute')
     const route = createEsriProxyRoute({
       path: '/proxy/esri/{path*}',
-      baseUrl: new URL('https://services1.arcgis.com/test-service-id/arcgis/rest/services'),
+      baseUrl: new URL('https://services1.arcgis.com/test-service-id/arcgis/rest/services/'),
       description: 'Proxy ESRI requests while injecting short-lived AGOL token server-side',
       logLabel: 'esri'
     })
@@ -79,7 +79,7 @@ describe('createEsriProxyRoute', () => {
     const { createEsriProxyRoute } = require('./createEsriProxyRoute')
     const route = createEsriProxyRoute({
       path: '/proxy/esri/{path*}',
-      baseUrl: new URL('https://services1.arcgis.com/test-service-id/arcgis/rest/services'),
+      baseUrl: new URL('https://services1.arcgis.com/test-service-id/arcgis/rest/services/'),
       description: 'Proxy ESRI requests while injecting short-lived AGOL token server-side',
       logLabel: 'esri'
     })
@@ -101,7 +101,7 @@ describe('createEsriProxyRoute', () => {
     const { createEsriProxyRoute } = require('./createEsriProxyRoute')
     const route = createEsriProxyRoute({
       path: '/proxy/esri/{path*}',
-      baseUrl: new URL('https://services1.arcgis.com/test-service-id/arcgis/rest/services'),
+      baseUrl: new URL('https://services1.arcgis.com/test-service-id/arcgis/rest/services/'),
       description: 'Proxy ESRI requests while injecting short-lived AGOL token server-side',
       logLabel: 'esri'
     })

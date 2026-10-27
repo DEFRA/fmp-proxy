@@ -24,7 +24,7 @@ const createEsriProxyRoute = ({
           passThrough: true,
           mapUri: async (request) => {
             const requestPath = request.params.path || ''
-            const targetUrl = new URL(requestPath, `${baseUrl.toString().replace(/\/$/, '')}/`)
+            const targetUrl = new URL(requestPath, baseUrl)
 
             Object.entries(request.query || {}).forEach(([key, value]) => {
               targetUrl.searchParams.set(key, value)
