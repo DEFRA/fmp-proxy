@@ -3,6 +3,8 @@ const Joi = require('joi')
 
 const schema = Joi.object({
   port: Joi.number().integer().min(1).max(65535).default(3005),
+  debug: Joi.boolean().default(false),
+  debugFilter: Joi.array().items(Joi.string().valid('boom', 'os-place', 'os-raster-tiles', 'os-vector-tiles', 'esri-service', 'esri-tiles')),
   agol: Joi.object({
     clientId: Joi.string().min(3).required(),
     clientSecret: Joi.string().min(3).required(),
@@ -24,9 +26,12 @@ const schema = Joi.object({
 
 const buildConfig = (env = process.env) => {
   const agolServiceId = env.agolServiceId
+  const debugFilter = env.PROXY_DEBUG_FILTER ? JSON.parse(env.PROXY_DEBUG_FILTER) : ['boom', 'os-place', 'os-raster-tiles', 'os-vector-tiles', 'esri-service', 'esri-tiles']
 
   return {
     port: env.FMPPROXYPORT,
+    debug: env.PROXY_DEBUG === 'true',
+    debugFilter,
     agol: {
       clientId: env.agolClientId,
       clientSecret: env.agolClientSecret,

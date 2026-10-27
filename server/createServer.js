@@ -24,7 +24,7 @@ const createServer = async () => {
     const response = request.response
 
     if (response?.isBoom) {
-      logDebug('Boom', 'proxy request failed', {
+      logDebug('boom', 'proxy request failed', {
         method: request.method,
         path: request.path,
         statusCode: response.output?.statusCode,
