@@ -1,5 +1,5 @@
 const { getOsToken } = require('../services/getOsToken')
-const { logDebug } = require('../services/proxyDebug')
+const { logDebug } = require('../services/logDebug')
 const { config } = require('../config')
 
 const OS_RASTER_WMTS_URL = 'https://api.os.uk/maps/raster/v1/wmts'

@@ -1,5 +1,5 @@
 const { getEsriToken } = require('./getEsriToken')
-const { logDebug } = require('./proxyDebug')
+const { logDebug } = require('./logDebug')
 
 // According to Google AI - these are the definitive list of potential vector tile query parameters:
 // f:String (json, pjson) - Response formatting for service root and metadata.

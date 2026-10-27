@@ -1,5 +1,5 @@
 const { getOsToken } = require('../services/getOsToken')
-const { logDebug } = require('../services/proxyDebug')
+const { logDebug } = require('../services/logDebug')
 
 const OS_API_BASE = 'https://api.os.uk/maps/vector/v1/vts/'
 

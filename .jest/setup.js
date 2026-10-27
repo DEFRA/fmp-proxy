@@ -5,7 +5,7 @@ const mockServer = require('../server/routes/__test-helper__/createMockServer')
 if (expect.getState().testPath.includes('/server/routes/')) {
   const mockWreckRequest = jest.fn()
 
-  jest.doMock('../server/services/proxyDebug', () => ({
+  jest.doMock('../server/services/logDebug', () => ({
     logDebug: jest.fn()
   }))
 
