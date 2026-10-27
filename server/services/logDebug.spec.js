@@ -18,7 +18,7 @@ describe('logDebug', () => {
   it('logs messages when debug is enabled and the label is in the default filter', () => {
     process.env.PROXY_DEBUG = 'true'
     process.env.PROXY_DEBUG_FILTER = ''
-    const { logDebug } = require('./logDebug')
+    const { logDebug } = jest.requireActual('./logDebug')
 
     logDebug('esri-token', 'hello world', { status: 'ok' })
     logDebug('esri-tiles', 'plain message')
@@ -32,7 +32,7 @@ describe('logDebug', () => {
   it('only logs labels included in PROXY_DEBUG_FILTER', () => {
     process.env.PROXY_DEBUG = 'true'
     process.env.PROXY_DEBUG_FILTER = JSON.stringify(['os-place'])
-    const { logDebug } = require('./logDebug')
+    const { logDebug } = jest.requireActual('./logDebug')
 
     logDebug('esri-token', 'filtered out')
     logDebug('esri-service', 'filtered out', { a: 1 })
@@ -46,7 +46,7 @@ describe('logDebug', () => {
   it('logs nothing when PROXY_DEBUG_FILTER is an empty array', () => {
     process.env.PROXY_DEBUG = 'true'
     process.env.PROXY_DEBUG_FILTER = '[]'
-    const { logDebug } = require('./logDebug')
+    const { logDebug } = jest.requireActual('./logDebug')
 
     logDebug('esri-token', 'message')
 
@@ -57,12 +57,12 @@ describe('logDebug', () => {
     process.env.PROXY_DEBUG = 'true'
     process.env.PROXY_DEBUG_FILTER = JSON.stringify(['esri-token', 'not-a-label'])
 
-    expect(() => require('./logDebug')).toThrow('debugFilter[1]')
+    expect(() => jest.requireActual('./logDebug')).toThrow('debugFilter[1]')
   })
 
   it('does not log messages when debug is disabled', () => {
     process.env.PROXY_DEBUG = 'false'
-    const { logDebug } = require('./logDebug')
+    const { logDebug } = jest.requireActual('./logDebug')
 
     logDebug('esri-token', 'hello world', { status: 'ok' })
 

@@ -103,4 +103,21 @@ describe('getEsriToken', () => {
     expect(result).toEqual({ token: 'esri-token-refreshed', expires: expect.any(Date) })
     expect(refreshTokenMock).toHaveBeenCalledTimes(1)
   })
+
+  it('logs and rethrows when the token refresh fails', async () => {
+    const appManager = {
+      token: 'esri-token-1',
+      refreshToken: jest.fn().mockRejectedValue(new Error('refresh failed'))
+    }
+
+    jest.doMock('@esri/arcgis-rest-request', () => ({
+      ApplicationCredentialsManager: {
+        fromCredentials: jest.fn().mockReturnValue(appManager)
+      }
+    }))
+
+    const { getEsriToken } = require('./getEsriToken')
+
+    await expect(getEsriToken(true)).rejects.toThrow('refresh failed')
+  })
 })
