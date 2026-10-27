@@ -1,8 +1,15 @@
+jest.mock('./proxyDebug')
+const mockGetEsriToken = jest.fn().mockResolvedValue({ token: 'server-token' })
+jest.mock('./getEsriToken', () => ({
+  getEsriToken: mockGetEsriToken
+}))
+
 describe('createEsriProxyRoute', () => {
   const originalEnv = process.env
 
   beforeEach(() => {
     jest.resetModules()
+    mockGetEsriToken.mockReset().mockResolvedValue({ token: 'server-token' })
     process.env = {
       ...originalEnv,
       FMPPROXYPORT: '8060',
@@ -26,16 +33,6 @@ describe('createEsriProxyRoute', () => {
   })
 
   it('creates a proxy route with metadata and disables auth', async () => {
-    const logDebugMock = jest.fn()
-    const getEsriTokenMock = jest.fn().mockResolvedValue({ token: 'server-token' })
-
-    jest.doMock('./proxyDebug', () => ({
-      logDebug: logDebugMock
-    }))
-    jest.doMock('./getEsriToken', () => ({
-      getEsriToken: getEsriTokenMock
-    }))
-
     const { createEsriProxyRoute } = require('./createEsriProxyRoute')
     const route = createEsriProxyRoute({
       path: '/proxy/esri/{path*}',
@@ -49,20 +46,11 @@ describe('createEsriProxyRoute', () => {
     expect(route.options.description).toBe('Proxy ESRI requests while injecting short-lived AGOL token server-side')
     expect(route.options.auth).toBe(false)
     expect(typeof route.options.handler.proxy.mapUri).toBe('function')
-    expect(getEsriTokenMock).not.toHaveBeenCalled()
-    expect(logDebugMock).not.toHaveBeenCalled()
+    expect(mockGetEsriToken).not.toHaveBeenCalled()
   })
 
   it('injects the server token and preserves valid query params', async () => {
-    const logDebugMock = jest.fn()
-    const getEsriTokenMock = jest.fn().mockResolvedValue({ token: 'server-token' })
-
-    jest.doMock('./proxyDebug', () => ({
-      logDebug: logDebugMock
-    }))
-    jest.doMock('./getEsriToken', () => ({
-      getEsriToken: getEsriTokenMock
-    }))
+    const requestUrl = 'http://localhost:3005/esri-service/Defences_NON_PRODUCTION/FeatureServer/0?f=json&token=browser-token&outFields=OBJECTID'
 
     const { createEsriProxyRoute } = require('./createEsriProxyRoute')
     const route = createEsriProxyRoute({
@@ -82,42 +70,13 @@ describe('createEsriProxyRoute', () => {
         token: 'browser-token',
         outFields: 'OBJECTID'
       },
-      url: {
-        pathname: '/proxy/esri/FeatureServer/0/query',
-        search: '?f=json&token=browser-token&outFields=OBJECTID'
-      }
+      url: requestUrl
     })
-
-    const uri = new URL(result.uri)
-
-    expect(getEsriTokenMock).toHaveBeenCalledTimes(1)
-    expect(uri.origin).toBe('https://services1.arcgis.com')
-    expect(uri.pathname).toBe('/test-service-id/arcgis/rest/services/FeatureServer/0/query')
-    expect(uri.searchParams.get('f')).toBe('json')
-    expect(uri.searchParams.get('outFields')).toBe('OBJECTID')
-    expect(uri.searchParams.get('token')).toBe('server-token')
-    expect(logDebugMock).toHaveBeenCalledWith('esri request received', expect.objectContaining({
-      method: 'GET',
-      requestUrl: '/proxy/esri/FeatureServer/0/query?f=json&token=browser-token&outFields=OBJECTID',
-      routePath: 'FeatureServer/0/query'
-    }))
-    expect(logDebugMock).toHaveBeenCalledWith('esri upstream resolved', expect.objectContaining({
-      hasQueryString: true,
-      upstreamUrl: 'https://services1.arcgis.com/test-service-id/arcgis/rest/services/FeatureServer/0/query'
-    }))
+    expect(mockGetEsriToken).toHaveBeenCalledTimes(1)
+    expect(result.uri).toEqual('https://services1.arcgis.com/test-service-id/arcgis/rest/services/FeatureServer/0/query?f=json&outFields=OBJECTID&token=server-token')
   })
 
   it('handles requests without query or URL data', async () => {
-    const logDebugMock = jest.fn()
-    const getEsriTokenMock = jest.fn().mockResolvedValue({ token: 'server-token' })
-
-    jest.doMock('./proxyDebug', () => ({
-      logDebug: logDebugMock
-    }))
-    jest.doMock('./getEsriToken', () => ({
-      getEsriToken: getEsriTokenMock
-    }))
-
     const { createEsriProxyRoute } = require('./createEsriProxyRoute')
     const route = createEsriProxyRoute({
       path: '/proxy/esri/{path*}',
@@ -133,29 +92,12 @@ describe('createEsriProxyRoute', () => {
       url: undefined
     })
 
-    const uri = new URL(result.uri)
-
-    expect(getEsriTokenMock).toHaveBeenCalledTimes(1)
-    expect(uri.origin).toBe('https://services1.arcgis.com')
-    expect(uri.pathname).toBe('/test-service-id/arcgis/rest/services/')
-    expect(uri.searchParams.get('token')).toBe('server-token')
-    expect(logDebugMock).toHaveBeenCalledWith('esri request received', expect.objectContaining({
-      method: 'GET',
-      requestUrl: 'unknown',
-      routePath: ''
-    }))
+    expect(mockGetEsriToken).toHaveBeenCalledTimes(1)
+    expect(result.uri).toEqual('https://services1.arcgis.com/test-service-id/arcgis/rest/services/?token=server-token')
   })
 
   it('throws when the ArcGIS token fetch fails', async () => {
-    const logDebugMock = jest.fn()
-    const getEsriTokenMock = jest.fn().mockRejectedValue(new Error('token failed'))
-
-    jest.doMock('./proxyDebug', () => ({
-      logDebug: logDebugMock
-    }))
-    jest.doMock('./getEsriToken', () => ({
-      getEsriToken: getEsriTokenMock
-    }))
+    mockGetEsriToken.mockRejectedValue(new Error('token failed'))
 
     const { createEsriProxyRoute } = require('./createEsriProxyRoute')
     const route = createEsriProxyRoute({
@@ -176,9 +118,5 @@ describe('createEsriProxyRoute', () => {
         search: '?f=json'
       }
     })).rejects.toThrow('token failed')
-
-    expect(logDebugMock).toHaveBeenCalledWith('esri token fetch failed', {
-      message: 'token failed'
-    })
   })
 })

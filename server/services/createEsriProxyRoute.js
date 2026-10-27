@@ -1,6 +1,12 @@
 const { getEsriToken } = require('./getEsriToken')
 const { logDebug } = require('./proxyDebug')
 
+// According to Google AI - these are the definitive list of potential vector tile query parameters:
+// f:String (json, pjson) - Response formatting for service root and metadata.
+// token:we can ignore this, as it gets added here
+// blankTile:Boolean (false) -- Controls empty/missing tile fallback responses.
+// v: cache busting version string occasionally used to force refresh of tiles.
+
 const createEsriProxyRoute = ({
   path,
   baseUrl,
@@ -19,20 +25,6 @@ const createEsriProxyRoute = ({
           mapUri: async (request) => {
             const requestPath = request.params.path || ''
             const targetUrl = new URL(requestPath, `${baseUrl.toString().replace(/\/$/, '')}/`)
-            let requestUrl = 'unknown'
-
-            // fallback to unknown requestUrl if not available, ignore for tests as cannot be easily mocked in unit tests, it is only for debugging purposes
-            /* istanbul ignore next */
-            if (request?.url?.pathname) {
-              requestUrl = `${request.url.pathname}${request.url.search || ''}`
-            }
-
-            logDebug(`${logLabel} request received`, {
-              method: request.method,
-              requestUrl,
-              routePath: requestPath
-            })
-
             let token
             try {
               ({ token } = await getEsriToken())
@@ -46,15 +38,14 @@ const createEsriProxyRoute = ({
             Object.entries(request.query || {}).forEach(([key, value]) => {
               targetUrl.searchParams.set(key, value)
             })
-
             targetUrl.searchParams.delete('token')
-            targetUrl.searchParams.set('token', token)
-
-            logDebug(`${logLabel} upstream resolved`, {
-              upstreamUrl: `${targetUrl.origin}${targetUrl.pathname}`,
-              hasQueryString: !!targetUrl.search
+            logDebug(`${logLabel} request resolved`, {
+              method: request.method,
+              requestUrl: request.url,
+              upstreamUrl: targetUrl.toString()
             })
 
+            targetUrl.searchParams.set('token', token)
             return { uri: targetUrl.toString() }
           }
         }
