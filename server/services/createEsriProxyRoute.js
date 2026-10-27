@@ -29,7 +29,7 @@ const createEsriProxyRoute = ({
             try {
               ({ token } = await getEsriToken())
             } catch (error) {
-              logDebug(`${logLabel} token fetch failed`, {
+              logDebug(logLabel, 'token fetch failed', {
                 message: error.message
               })
               throw error
@@ -39,7 +39,7 @@ const createEsriProxyRoute = ({
               targetUrl.searchParams.set(key, value)
             })
             targetUrl.searchParams.delete('token')
-            logDebug(`${logLabel} request resolved`, {
+            logDebug(logLabel, 'rewritten', {
               method: request.method,
               requestUrl: request.url,
               upstreamUrl: targetUrl.toString()

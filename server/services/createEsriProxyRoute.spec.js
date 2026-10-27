@@ -1,4 +1,3 @@
-jest.mock('./proxyDebug')
 const mockGetEsriToken = jest.fn().mockResolvedValue({ token: 'server-token' })
 jest.mock('./getEsriToken', () => ({
   getEsriToken: mockGetEsriToken

@@ -11,7 +11,7 @@ const buildRasterTilesUri = async (request) => {
   // The key is always supplied server-side
   wmtsUrl.searchParams.set('key', config.ordnanceSurvey.osSearchKey)
 
-  logDebug('os raster tiles request received', {
+  logDebug('os-raster-tiles', 'rewritten', {
     method: request.method,
     requestUrl: `${request.url.pathname}${request.url.search}`,
     upstreamUrl: wmtsUrl.toString()

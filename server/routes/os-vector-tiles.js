@@ -10,7 +10,7 @@ const buildVectorTilesUri = async (request) => {
     targetUrl.searchParams.set(key, value)
   })
 
-  logDebug('os vector tiles request resolved', {
+  logDebug('os-vector-tiles', 'rewritten', {
     method: request.method,
     requestUrl: request.url,
     upstreamUrl: targetUrl.toString()
