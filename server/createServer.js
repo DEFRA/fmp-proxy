@@ -1,6 +1,5 @@
 const hapi = require('@hapi/hapi')
 const { config } = require('./config')
-const { logDebug } = require('./services/proxyDebug')
 const createServer = async () => {
   const server = hapi.server({
     port: config.port,
@@ -24,7 +23,7 @@ const createServer = async () => {
     const response = request.response
 
     if (response?.isBoom) {
-      logDebug('boom', 'proxy request failed', {
+      console.log('proxy request failed', {
         method: request.method,
         path: request.path,
         statusCode: response.output?.statusCode,

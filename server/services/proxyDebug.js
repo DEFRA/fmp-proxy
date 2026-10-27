@@ -1,6 +1,9 @@
-const logDebug = process.env.PROXY_DEBUG === 'true'
+const { config } = require('../config')
+const logDebug = config.debug
   ? (logLabel, message, metadata = {}) => {
-      // const payload = Object.keys(metadata).length ? ` ${JSON.stringify(metadata)}` : ''
+      if (!config.debugFilter.includes(logLabel)) {
+        return
+      }
       console.log(logLabel, `${message}`)
       if (Object.keys(metadata).length) {
         console.dir(metadata, { depth: null })
