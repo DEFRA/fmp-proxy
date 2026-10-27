@@ -1,8 +1,12 @@
 require('./environment')
 const Joi = require('joi')
 
+const debugFilterValues = ['os-place', 'os-raster-tiles', 'os-vector-tiles', 'esri-service', 'esri-tiles', 'esri-token']
+
 const schema = Joi.object({
   port: Joi.number().integer().min(1).max(65535).default(3005),
+  debug: Joi.boolean().default(false),
+  debugFilter: Joi.array().items(Joi.string().valid(...debugFilterValues)),
   agol: Joi.object({
     clientId: Joi.string().min(3).required(),
     clientSecret: Joi.string().min(3).required(),
@@ -24,15 +28,18 @@ const schema = Joi.object({
 
 const buildConfig = (env = process.env) => {
   const agolServiceId = env.agolServiceId
+  const debugFilter = env.PROXY_DEBUG_FILTER ? JSON.parse(env.PROXY_DEBUG_FILTER) : debugFilterValues
 
   return {
     port: env.FMPPROXYPORT,
+    debug: env.PROXY_DEBUG === 'true',
+    debugFilter,
     agol: {
       clientId: env.agolClientId,
       clientSecret: env.agolClientSecret,
       serviceId: agolServiceId,
-      serviceUrl: `https://services1.arcgis.com/${agolServiceId}/arcgis/rest/services`,
-      vectorTileUrl: `https://tiles.arcgis.com/tiles/${agolServiceId}/arcgis/rest/services`,
+      serviceUrl: `https://services1.arcgis.com/${agolServiceId}/arcgis/rest/services/`,
+      vectorTileUrl: `https://tiles.arcgis.com/tiles/${agolServiceId}/arcgis/rest/services/`,
       tokenDurationInMinutes: env.ESRI_TOKEN_DURATION_MINUTES
     },
     ordnanceSurvey: {

@@ -1,24 +1,23 @@
 const { getOsToken } = require('../services/getOsToken')
-const { logDebug } = require('../services/proxyDebug')
+const { logDebug } = require('../services/logDebug')
 
 const OS_API_BASE = 'https://api.os.uk/maps/vector/v1/vts/'
 
 const buildVectorTilesUri = async (request) => {
-  const requestUrl = `${request.url.pathname}${request.url.search}`
-  const vectorUrl = new URL(request.params.path, OS_API_BASE)
+  const targetUrl = new URL(request.params.path, OS_API_BASE)
 
   Object.entries(request.query).forEach(([key, value]) => {
-    vectorUrl.searchParams.set(key, value)
+    targetUrl.searchParams.set(key, value)
   })
 
-  logDebug('os vector tiles request received', {
+  logDebug('os-vector-tiles', 'rewritten', {
     method: request.method,
-    requestUrl,
-    upstreamUrl: vectorUrl.toString()
+    requestUrl: request.url,
+    upstreamUrl: targetUrl.toString()
   })
 
   return {
-    uri: vectorUrl.toString(),
+    uri: targetUrl.toString(),
     headers: { authorization: `Bearer ${(await getOsToken()).access_token}` }
   }
 }

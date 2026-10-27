@@ -1,13 +1,13 @@
 const { PassThrough } = require('stream')
 const mockServer = require('../server/routes/__test-helper__/createMockServer')
 
+jest.doMock('../server/services/logDebug', () => ({
+  logDebug: jest.fn()
+}))
+
 // Global mocks apply to the route specs only
 if (expect.getState().testPath.includes('/server/routes/')) {
   const mockWreckRequest = jest.fn()
-
-  jest.doMock('../server/services/proxyDebug', () => ({
-    logDebug: jest.fn()
-  }))
 
   jest.doMock('../server/services/getOsToken', () => ({
     getOsToken: jest.fn().mockResolvedValue({ access_token: 'token' })

@@ -1,5 +1,5 @@
 const { getOsToken } = require('../services/getOsToken')
-const { logDebug } = require('../services/proxyDebug')
+const { logDebug } = require('../services/logDebug')
 const { config } = require('../config')
 
 const OS_RASTER_WMTS_URL = 'https://api.os.uk/maps/raster/v1/wmts'
@@ -11,7 +11,7 @@ const buildRasterTilesUri = async (request) => {
   // The key is always supplied server-side
   wmtsUrl.searchParams.set('key', config.ordnanceSurvey.osSearchKey)
 
-  logDebug('os raster tiles request received', {
+  logDebug('os-raster-tiles', 'rewritten', {
     method: request.method,
     requestUrl: `${request.url.pathname}${request.url.search}`,
     upstreamUrl: wmtsUrl.toString()

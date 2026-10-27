@@ -1,5 +1,6 @@
 const { ApplicationCredentialsManager } = require('@esri/arcgis-rest-request')
 const { config } = require('../config')
+const { logDebug } = require('./logDebug')
 
 const ONE_MINUTE_MS = 60000
 const FIVE_SECONDS = 5000
@@ -57,8 +58,13 @@ const getToken = async (forceRefresh) => {
 }
 
 const getEsriToken = async (forceRefresh = false) => {
-  const token = await getToken(forceRefresh)
-  return { token, expires: tokenExpiryTime }
+  try {
+    const token = await getToken(forceRefresh)
+    return { token, expires: tokenExpiryTime }
+  } catch (error) {
+    logDebug('esri-token', 'token fetch failed', { message: error.message })
+    throw error
+  }
 }
 
 module.exports = {
