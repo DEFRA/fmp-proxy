@@ -1,7 +1,11 @@
 require('./server/config/environment')
-const createServer = require('./server/createServer')
 
-createServer()
+const start = async () => {
+  const createServer = require('./server/createServer')
+  return createServer()
+}
+
+start()
   .then((server) => server.start())
   .catch((err) => {
     console.log('error', err)
