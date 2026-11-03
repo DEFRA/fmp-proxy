@@ -5,13 +5,13 @@ describe('esri-service route', () => {
     const { server } = esriTestVariables
     const response = await server.inject({
       method: 'GET',
-      url: 'http://localhost:3005/esri-service/FeatureServer/0/query?f=json&token=browser-token&outFields=OBJECTID'
+      url: 'http://localhost:3005/esri-service/main-rivers/FeatureServer/0/query?f=json&token=browser-token&outFields=OBJECTID'
     })
 
     const { upstream } = esriTestVariables.validateEsriRoute(response)
 
     expect(upstream.origin).toBe('https://services1.arcgis.com')
-    expect(upstream.pathname).toBe('/test-service-id/arcgis/rest/services/FeatureServer/0/query')
+    expect(upstream.pathname).toBe('/test-service-id/arcgis/rest/services/Statutory_Main_River_Map/FeatureServer/0/query')
     expect(upstream.searchParams.get('f')).toBe('json')
     expect(upstream.searchParams.get('outFields')).toBe('OBJECTID')
     expect(upstream.searchParams.getAll('token')).toEqual(['server-esri-token'])

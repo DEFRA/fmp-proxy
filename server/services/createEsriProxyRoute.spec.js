@@ -11,6 +11,7 @@ describe('createEsriProxyRoute', () => {
     mockGetEsriToken.mockReset().mockResolvedValue({ token: 'server-token' })
     process.env = {
       ...originalEnv,
+      ENV: 'test',
       FMPPROXYPORT: '8060',
       agolClientId: 'agol-client-id',
       agolClientSecret: 'agol-client-secret',
@@ -34,8 +35,9 @@ describe('createEsriProxyRoute', () => {
   it('creates a proxy route with metadata and disables auth', async () => {
     const { createEsriProxyRoute } = require('./createEsriProxyRoute')
     const route = createEsriProxyRoute({
+      tileName: 'main-rivers',
       path: '/proxy/esri/{path*}',
-      baseUrl: new URL('https://services1.arcgis.com/test-service-id/arcgis/rest/services'),
+      baseUrl: 'https://services1.arcgis.com/test-service-id/arcgis/rest/services',
       description: 'Proxy ESRI requests while injecting short-lived AGOL token server-side',
       logLabel: 'esri'
     })
@@ -53,8 +55,9 @@ describe('createEsriProxyRoute', () => {
 
     const { createEsriProxyRoute } = require('./createEsriProxyRoute')
     const route = createEsriProxyRoute({
+      tileName: 'main-rivers',
       path: '/proxy/esri/{path*}',
-      baseUrl: new URL('https://services1.arcgis.com/test-service-id/arcgis/rest/services/'),
+      baseUrl: 'https://services1.arcgis.com/test-service-id/arcgis/rest/services',
       description: 'Proxy ESRI requests while injecting short-lived AGOL token server-side',
       logLabel: 'esri'
     })
@@ -72,14 +75,15 @@ describe('createEsriProxyRoute', () => {
       url: requestUrl
     })
     expect(mockGetEsriToken).toHaveBeenCalledTimes(1)
-    expect(result.uri).toEqual('https://services1.arcgis.com/test-service-id/arcgis/rest/services/FeatureServer/0/query?f=json&outFields=OBJECTID&token=server-token')
+    expect(result.uri).toEqual('https://services1.arcgis.com/test-service-id/arcgis/rest/services/Statutory_Main_River_Map/FeatureServer/0/query?f=json&outFields=OBJECTID&token=server-token')
   })
 
   it('handles requests without query or URL data', async () => {
     const { createEsriProxyRoute } = require('./createEsriProxyRoute')
     const route = createEsriProxyRoute({
+      tileName: 'main-rivers',
       path: '/proxy/esri/{path*}',
-      baseUrl: new URL('https://services1.arcgis.com/test-service-id/arcgis/rest/services/'),
+      baseUrl: 'https://services1.arcgis.com/test-service-id/arcgis/rest/services',
       description: 'Proxy ESRI requests while injecting short-lived AGOL token server-side',
       logLabel: 'esri'
     })
@@ -92,7 +96,7 @@ describe('createEsriProxyRoute', () => {
     })
 
     expect(mockGetEsriToken).toHaveBeenCalledTimes(1)
-    expect(result.uri).toEqual('https://services1.arcgis.com/test-service-id/arcgis/rest/services/?token=server-token')
+    expect(result.uri).toEqual('https://services1.arcgis.com/test-service-id/arcgis/rest/services/Statutory_Main_River_Map?token=server-token')
   })
 
   it('throws when the ArcGIS token fetch fails', async () => {
@@ -100,8 +104,9 @@ describe('createEsriProxyRoute', () => {
 
     const { createEsriProxyRoute } = require('./createEsriProxyRoute')
     const route = createEsriProxyRoute({
+      tileName: 'main-rivers',
       path: '/proxy/esri/{path*}',
-      baseUrl: new URL('https://services1.arcgis.com/test-service-id/arcgis/rest/services/'),
+      baseUrl: 'https://services1.arcgis.com/test-service-id/arcgis/rest/services',
       description: 'Proxy ESRI requests while injecting short-lived AGOL token server-side',
       logLabel: 'esri'
     })

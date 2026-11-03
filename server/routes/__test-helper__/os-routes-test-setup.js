@@ -18,6 +18,7 @@ const setupOsRouteTests = () => {
     }))
 
     process.env = {
+      ENV: 'test',
       FMPPROXYPORT: '8060',
       agolServiceId: 'test-service-id',
       agolClientId: 'test-agol-client-id',

@@ -5,6 +5,7 @@ const debugFilterValues = ['os-place', 'os-raster-tiles', 'os-vector-tiles', 'es
 
 const schema = Joi.object({
   port: Joi.number().integer().min(1).max(65535).default(3005),
+  env: Joi.string().required().valid('local', 'development', 'test', 'pre-prod', 'prod'),
   debug: Joi.boolean().default(false),
   debugFilter: Joi.array().items(Joi.string().valid(...debugFilterValues)),
   agol: Joi.object({
@@ -32,14 +33,15 @@ const buildConfig = (env = process.env) => {
 
   return {
     port: env.FMPPROXYPORT,
+    env: env.ENV,
     debug: env.PROXY_DEBUG === 'true',
     debugFilter,
     agol: {
       clientId: env.agolClientId,
       clientSecret: env.agolClientSecret,
       serviceId: agolServiceId,
-      serviceUrl: `https://services1.arcgis.com/${agolServiceId}/arcgis/rest/services/`,
-      vectorTileUrl: `https://tiles.arcgis.com/tiles/${agolServiceId}/arcgis/rest/services/`,
+      serviceUrl: `https://services1.arcgis.com/${agolServiceId}/arcgis/rest/services`,
+      vectorTileUrl: `https://tiles.arcgis.com/tiles/${agolServiceId}/arcgis/rest/services`,
       tokenDurationInMinutes: env.ESRI_TOKEN_DURATION_MINUTES
     },
     ordnanceSurvey: {
