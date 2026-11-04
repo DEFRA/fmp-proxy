@@ -62,6 +62,8 @@ jobs:
       # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#adding-a-job-summary
       - name: Generate job summary
         id: summary
+        env:
+          IMAGE_DESCRIPTION: ${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.description'] }}
         run: |
           {
             echo "### Docker Image details"
@@ -69,7 +71,7 @@ jobs:
             echo "| Label      | Value |"
             echo "| ---------- | ----- |"
             echo "| created    | ${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }} |"
-            echo "| description| ${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.description'] }} |"
+            echo "| description| $IMAGE_DESCRIPTION |"
             echo "| licenses   | ${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.licenses'] }} |"
             echo "| revision   | ${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.revision'] }} |"
             echo "| source     | ${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.source'] }} |"
