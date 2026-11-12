@@ -14,6 +14,7 @@ describe('getOsToken', () => {
       ordnanceSurveyOsNamesUrl: 'https://api.os.uk/search/names/v1/find?maxresults=1&key=test',
       ordnanceSurveyOsSearchKey: 'test-os-search-key',
       ordnanceSurveyOsClientId: 'os-client-id',
+      proxyPublicKey: 'test-public-key',
       ordnanceSurveyOsClientSecret: 'os-client-secret',
       OS_TOKEN_URL: 'https://api.os.uk/oauth2/token/v1'
     }

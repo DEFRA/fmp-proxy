@@ -17,6 +17,7 @@ const createServer = async () => {
   })
 
   await server.register(require('@hapi/h2o2'))
+  await server.register(require('./plugins/fmp-cookie-check'))
   await server.register(require('./plugins/router'))
 
   server.ext('onPreResponse', (request, h) => {

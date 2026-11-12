@@ -6,6 +6,7 @@ const debugFilterValues = ['os-place', 'os-raster-tiles', 'os-vector-tiles', 'es
 const schema = Joi.object({
   port: Joi.number().integer().min(1).max(65535).default(3005),
   env: Joi.string().required().valid('local', 'development', 'test', 'pre-prod', 'prod'),
+  proxyPublicKey: Joi.string().min(1).required(),
   debug: Joi.boolean().default(false),
   debugFilter: Joi.array().items(Joi.string().valid(...debugFilterValues)),
   agol: Joi.object({
@@ -34,6 +35,7 @@ const buildConfig = (env = process.env) => {
   return {
     port: env.FMPPROXYPORT,
     env: env.ENV,
+    proxyPublicKey: env.proxyPublicKey,
     debug: env.PROXY_DEBUG === 'true',
     debugFilter,
     agol: {

@@ -24,6 +24,7 @@ Copy `.env.example` to `.env` and set real values.
 - `ordnanceSurveyOsSearchKey` required (can be empty string)
 - `ordnanceSurveyOsClientId` required
 - `ordnanceSurveyOsClientSecret` required
+- `proxyPublicKey` required (base64 encoded PEM public key matching fmp-app's `proxyPrivateKey`; used to verify the `fmp` cookie, which must be less than 2 hours old)
 - `OS_TOKEN_URL` optional (defaults to OS production token endpoint)
 
 ## Run locally
