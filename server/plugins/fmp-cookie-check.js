@@ -3,8 +3,8 @@ const { extractTokenValue } = require('@defra/fmp-utilities/secureUtils')
 const { config } = require('../config')
 
 const COOKIE_NAME = 'fmp'
-const MAX_AGE_MS = 20 * 60 * 1000 // 20 minute lifespan for the cookie
-const EXEMPT_PATHS = ['/health-check']
+const MAX_AGE_MS = 1200000 // 20 minute lifespan for the cookie
+const EXEMPT_PATHS = new Set(['/health-check'])
 
 exports.plugin = {
   name: 'fmp-cookie-check',
@@ -13,7 +13,7 @@ exports.plugin = {
     server.state(COOKIE_NAME, { encoding: 'none', strictHeader: false, ignoreErrors: true })
 
     server.ext('onPreAuth', (request, h) => {
-      if (EXEMPT_PATHS.includes(request.path) || request.method === 'options') {
+      if (EXEMPT_PATHS.has(request.path) || request.method === 'options') {
         return h.continue
       }
       const token = request.state[COOKIE_NAME]
