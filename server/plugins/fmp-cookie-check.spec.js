@@ -18,6 +18,7 @@ describe('fmp-cookie-check', () => {
   beforeEach(async () => {
     jest.resetModules()
     jest.spyOn(console, 'log').mockImplementation(() => {})
+    jest.spyOn(console, 'error').mockImplementation(() => {})
     keys = generateKeys()
     process.env = {
       ...originalEnv,
@@ -48,18 +49,32 @@ describe('fmp-cookie-check', () => {
     server.inject({ method: 'GET', url, headers: cookie ? { cookie: `fmp=${cookie}` } : {} })
 
   it('rejects requests without a cookie', async () => {
-    expect((await inject()).statusCode).toBe(401)
+    expect((await inject()).result.message).toBe('Missing fmp cookie')
   })
 
   it('rejects a cookie with an invalid signature', async () => {
     const other = generateKeys()
     const token = signToken({ created: Date.now() }, other.privateKey)
-    expect((await inject(token)).statusCode).toBe(401)
+    expect((await inject(token)).result.message).toBe('Invalid fmp cookie')
+  })
+
+  it('rejects a validly signed cookie without a created timestamp', async () => {
+    const token = signToken({ other: true }, keys.privateKey)
+    expect((await inject(token)).result.message).toBe('Invalid fmp cookie')
+  })
+
+  it('rejects a malformed cookie', async () => {
+    expect((await inject('not-a-token')).result.message).toBe('Invalid fmp cookie')
+  })
+
+  it('rejects duplicate fmp cookies', async () => {
+    const response = await server.inject({ method: 'GET', url: '/test-route', headers: { cookie: 'fmp=a; fmp=b' } })
+    expect(response.result.message).toBe('Invalid fmp cookie')
   })
 
   it('rejects a cookie older than 2 hours', async () => {
     const token = signToken({ created: Date.now() - (2 * 60 * 60 * 1000 + 1000) }, keys.privateKey)
-    expect((await inject(token)).statusCode).toBe(401)
+    expect((await inject(token)).result.message).toBe('Expired fmp cookie')
   })
 
   it('accepts a recent cookie', async () => {

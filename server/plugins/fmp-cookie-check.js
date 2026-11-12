@@ -17,10 +17,16 @@ exports.plugin = {
         return h.continue
       }
       const token = request.state[COOKIE_NAME]
+      if (!token) {
+        throw Boom.unauthorized('Missing fmp cookie')
+      }
       const value = typeof token === 'string' ? extractTokenValue(token, config.proxyPublicKey) : null
       const created = Number(value?.created)
-      if (!Number.isFinite(created) || Date.now() - created > MAX_AGE_MS) {
-        throw Boom.unauthorized('Missing, invalid or expired fmp cookie')
+      if (!Number.isFinite(created)) {
+        throw Boom.unauthorized('Invalid fmp cookie')
+      }
+      if (Date.now() - created > MAX_AGE_MS) {
+        throw Boom.unauthorized('Expired fmp cookie')
       }
       return h.continue
     })
