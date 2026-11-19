@@ -21,7 +21,6 @@ const schema = Joi.object({
     osGetCapabilitiesUrl: Joi.string().required().allow(''),
     osMapsUrl: Joi.string().uri().required(),
     osNamesUrl: Joi.string().uri().required(),
-    osSearchKey: Joi.string().required().allow(''),
     osClientId: Joi.string().min(3).required(),
     osClientSecret: Joi.string().min(3).required(),
     tokenUrl: Joi.string().uri().default('https://api.os.uk/oauth2/token/v1')
@@ -50,7 +49,6 @@ const buildConfig = (env = process.env) => {
       osGetCapabilitiesUrl: env.ordnanceSurveyOsGetCapabilitiesUrl,
       osMapsUrl: env.ordnanceSurveyOsMapsUrl,
       osNamesUrl: env.ordnanceSurveyOsNamesUrl,
-      osSearchKey: env.ordnanceSurveyOsSearchKey,
       osClientId: env.ordnanceSurveyOsClientId,
       osClientSecret: env.ordnanceSurveyOsClientSecret,
       tokenUrl: env.OS_TOKEN_URL

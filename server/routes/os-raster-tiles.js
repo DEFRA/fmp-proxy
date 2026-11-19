@@ -9,7 +9,7 @@ const buildRasterTilesUri = async (request) => {
   wmtsUrl.search = request.url.search
 
   // The key is always supplied server-side
-  wmtsUrl.searchParams.set('key', config.ordnanceSurvey.osSearchKey)
+  wmtsUrl.searchParams.set('key', config.ordnanceSurvey.osClientId)
 
   logDebug('os-raster-tiles', 'rewritten', {
     method: request.method,

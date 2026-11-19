@@ -12,7 +12,6 @@ describe('config', () => {
       ordnanceSurveyOsGetCapabilitiesUrl: 'https://api.os.uk/maps/raster/v1/wmts',
       ordnanceSurveyOsMapsUrl: 'https://api.os.uk/maps/vector/v1/vts',
       ordnanceSurveyOsNamesUrl: 'https://api.os.uk/search/names/v1/find?maxresults=1&key=test',
-      ordnanceSurveyOsSearchKey: 'test-os-search-key',
       ordnanceSurveyOsClientId: 'os-client-id',
       proxyPublicKey: 'test-public-key',
       ordnanceSurveyOsClientSecret: 'os-client-secret'
