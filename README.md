@@ -18,9 +18,6 @@ Copy `.env.example` to `.env` and set real values.
 - `agolClientSecret` required
 - `agolServiceId` required
 - `ESRI_TOKEN_DURATION_MINUTES` optional (defaults to `7200`)
-- `ordnanceSurveyOsGetCapabilitiesUrl` required (can be empty string)
-- `ordnanceSurveyOsMapsUrl` required
-- `ordnanceSurveyOsNamesUrl` required
 - `ordnanceSurveyOsClientId` required
 - `ordnanceSurveyOsClientSecret` required
 - `proxyPublicKey` required (base64 encoded PEM public key matching fmp-app's `proxyPrivateKey`; used to verify the `fmp` cookie, which must be less than 2 hours old)

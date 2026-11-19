@@ -46,9 +46,9 @@ const buildConfig = (env = process.env) => {
       tokenDurationInMinutes: env.ESRI_TOKEN_DURATION_MINUTES
     },
     ordnanceSurvey: {
-      osGetCapabilitiesUrl: env.ordnanceSurveyOsGetCapabilitiesUrl,
-      osMapsUrl: env.ordnanceSurveyOsMapsUrl,
-      osNamesUrl: env.ordnanceSurveyOsNamesUrl,
+      osGetCapabilitiesUrl: 'SERVICE=WMTS&request=getcapabilities&VERSION=1.0.0&URL=https://flood-warning-information.service.gov.uk/',
+      osMapsUrl: 'https://api.os.uk/maps/raster/v1/wmts',
+      osNamesUrl: 'https://api.os.uk/search/names/v1/find?maxresults=1&query=',
       osClientId: env.ordnanceSurveyOsClientId,
       osClientSecret: env.ordnanceSurveyOsClientSecret,
       tokenUrl: env.OS_TOKEN_URL
