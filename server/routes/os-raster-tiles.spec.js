@@ -30,7 +30,7 @@ describe('os-raster-tiles route', () => {
     expect(wreckRequestMock).toHaveBeenCalledTimes(1)
     const [method, uri, options] = wreckRequestMock.mock.calls[0]
     expect(method).toBe('get')
-    expect(uri).toBe(`https://api.os.uk/maps/raster/v1/wmts?${tileQuery}&key=test-os-search-key`)
+    expect(uri).toBe(`https://api.os.uk/maps/raster/v1/wmts?${tileQuery}&key=os-client-id`)
     expect(options.headers.authorization).toMatch(/token$/)
   })
 
@@ -41,7 +41,7 @@ describe('os-raster-tiles route', () => {
     })
 
     const [, uri] = wreckRequestMock.mock.calls[0]
-    expect(uri).toBe('https://api.os.uk/maps/raster/v1/wmts?REQUEST=GetTile&key=test-os-search-key')
+    expect(uri).toBe('https://api.os.uk/maps/raster/v1/wmts?REQUEST=GetTile&key=os-client-id')
   })
 
   it('does not proxy paths below the route', async () => {
