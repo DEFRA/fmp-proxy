@@ -51,7 +51,7 @@ const buildConfig = (env = process.env) => {
       osNamesUrl: 'https://api.os.uk/search/names/v1/find?maxresults=1&query=',
       osClientId: env.ordnanceSurveyOsClientId,
       osClientSecret: env.ordnanceSurveyOsClientSecret,
-      tokenUrl: env.OS_TOKEN_URL
+      tokenUrl: 'https://api.os.uk/oauth2/token/v1'
     }
   }
 }
