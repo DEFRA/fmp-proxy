@@ -23,14 +23,9 @@ const setupOsRouteTests = () => {
       agolServiceId: 'test-service-id',
       agolClientId: 'test-agol-client-id',
       agolClientSecret: 'test-agol-client-secret',
-      ordnanceSurveyOsGetCapabilitiesUrl: 'https://api.os.uk/maps/raster/v1/wmts',
-      ordnanceSurveyOsMapsUrl: 'https://api.os.uk/maps/vector/v1/vts',
-      ordnanceSurveyOsNamesUrl: 'https://api.os.uk/search/names/v1',
-      ordnanceSurveyOsSearchKey: 'test-os-search-key',
       ordnanceSurveyOsClientId: 'os-client-id',
       proxyPublicKey: 'test-public-key',
-      ordnanceSurveyOsClientSecret: 'os-client-secret',
-      OS_TOKEN_URL: 'https://api.os.uk/oauth2/token/v1'
+      ordnanceSurveyOsClientSecret: 'os-client-secret'
     }
   })
 

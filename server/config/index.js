@@ -3,6 +3,9 @@ const Joi = require('joi')
 
 const debugFilterValues = ['os-place', 'os-raster-tiles', 'os-vector-tiles', 'esri-service', 'esri-tiles', 'esri-token']
 
+const tokenDurationInMinutes = 7200
+const defaultPort = 3000
+
 const schema = Joi.object({
   port: Joi.number().integer().min(1).max(65535).default(3005),
   env: Joi.string().required().valid('local', 'development', 'test', 'pre-prod', 'prod'),
@@ -15,7 +18,7 @@ const schema = Joi.object({
     serviceId: Joi.string().min(3).required(),
     serviceUrl: Joi.string().uri().required(),
     vectorTileUrl: Joi.string().uri().required(),
-    tokenDurationInMinutes: Joi.number().integer().min(1).default(7200)
+    tokenDurationInMinutes: Joi.number().integer().min(1)
   }).required(),
   ordnanceSurvey: Joi.object({
     osGetCapabilitiesUrl: Joi.string().required().allow(''),
@@ -23,7 +26,7 @@ const schema = Joi.object({
     osNamesUrl: Joi.string().uri().required(),
     osClientId: Joi.string().min(3).required(),
     osClientSecret: Joi.string().min(3).required(),
-    tokenUrl: Joi.string().uri().default('https://api.os.uk/oauth2/token/v1')
+    tokenUrl: Joi.string().uri()
   }).required()
 })
 
@@ -32,7 +35,7 @@ const buildConfig = (env = process.env) => {
   const debugFilter = env.PROXY_DEBUG_FILTER ? JSON.parse(env.PROXY_DEBUG_FILTER) : debugFilterValues
 
   return {
-    port: env.FMPPROXYPORT,
+    port: env.FMPPROXYPORT || defaultPort,
     env: env.ENV,
     proxyPublicKey: env.proxyPublicKey,
     debug: env.PROXY_DEBUG === 'true',
@@ -43,7 +46,7 @@ const buildConfig = (env = process.env) => {
       serviceId: agolServiceId,
       serviceUrl: `https://services1.arcgis.com/${agolServiceId}/arcgis/rest/services`,
       vectorTileUrl: `https://tiles.arcgis.com/tiles/${agolServiceId}/arcgis/rest/services`,
-      tokenDurationInMinutes: env.ESRI_TOKEN_DURATION_MINUTES
+      tokenDurationInMinutes: env.ESRI_TOKEN_DURATION_MINUTES || tokenDurationInMinutes
     },
     ordnanceSurvey: {
       osGetCapabilitiesUrl: 'SERVICE=WMTS&request=getcapabilities&VERSION=1.0.0&URL=https://flood-warning-information.service.gov.uk/',
@@ -51,7 +54,7 @@ const buildConfig = (env = process.env) => {
       osNamesUrl: 'https://api.os.uk/search/names/v1/find?maxresults=1&query=',
       osClientId: env.ordnanceSurveyOsClientId,
       osClientSecret: env.ordnanceSurveyOsClientSecret,
-      tokenUrl: env.OS_TOKEN_URL
+      tokenUrl: 'https://api.os.uk/oauth2/token/v1'
     }
   }
 }
