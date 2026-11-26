@@ -33,6 +33,7 @@ describe('os-place-lookup route', () => {
     ['Brighton%20and%20Hove', 'Brighton%20and%20Hove'],
     ['Man', 'Man'],
     ["St%20John's", "St%20John's"],
+    ['a%26name%3Dx%23', 'a%26name%3Dx%23'],
     ['a'.repeat(500), 'a'.repeat(500)]
   ])('rewrites /place-lookup/%s to the OS names api', async (placeName, expectedQuery) => {
     const response = await server.inject({
