@@ -1,4 +1,21 @@
 require('./server/config/environment')
+const { EventEmitter } = require('events')
+const Wreck = require('@hapi/wreck')
+
+// Wreck wraps upstream connection failures as a generic "Client request error", so log the real cause here
+Wreck.events = new EventEmitter()
+Wreck.events.on('response', (err, { uri }) => {
+  if (err) {
+    const { code, errors, message, syscall } = err.data || err
+    console.log('upstream request error', {
+      host: uri.host,
+      code,
+      syscall,
+      message,
+      errors: errors?.map(({ code: errorCode, address }) => ({ code: errorCode, address }))
+    })
+  }
+})
 
 const start = async () => {
   const createServer = require('./server/createServer')
