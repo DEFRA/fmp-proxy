@@ -14,4 +14,17 @@ describe('esri-tiles route', () => {
     expect(upstream.pathname).toBe('/tiles/test-service-id/arcgis/rest/services/Flood_Zones_2_and_3_Rivers_and_Sea_NON_PRODUCTION/VectorTileServer/tile/0/0/0.pbf')
     expect(upstream.searchParams.getAll('token')).toEqual(['server-esri-token'])
   })
+
+  it.each(['sprite@2x.json', 'sprite@2x.png'])('proxies resources/sprites/%s', async (file) => {
+    const { server } = esriTestVariables
+    const response = await server.inject({
+      method: 'GET',
+      url: `http://localhost:3005/esri-tiles/flood-zones-cc/resources/sprites/${file}`
+    })
+
+    const { upstream } = esriTestVariables.validateEsriRoute(response)
+
+    expect(upstream.origin).toBe('https://tiles.arcgis.com')
+    expect(upstream.pathname.endsWith(`/VectorTileServer/resources/sprites/${file}`)).toBe(true)
+  })
 })

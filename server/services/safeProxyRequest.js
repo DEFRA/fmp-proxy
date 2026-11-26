@@ -5,7 +5,7 @@ const CREDENTIAL_HEADERS = ['authorization', 'x-esri-authorization', 'x-forwarde
 
 // hapi has already percent-decoded params.path, so anything dangerous is visible here
 // eslint-disable-next-line no-control-regex
-const UNSAFE_PATH = /(^|[\\/])\.\.?([\\/]|$)|[\u0000-\u001f\u007f\\:?#@]|\/\/|^\//
+const UNSAFE_PATH = /(^|[\\/])\.\.?([\\/]|$)|[\u0000-\u001f\u007f\\:?#]|\/\/|^\//
 
 const isSafePath = (path) => !path || !UNSAFE_PATH.test(path)
 
