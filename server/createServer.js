@@ -36,7 +36,8 @@ const createServer = async () => {
         method: request.method,
         path: request.path,
         statusCode: response.output?.statusCode,
-        message: response.message
+        message: response.message,
+        cause: response.data?.code || response.data?.message
       })
     }
     return h.continue
