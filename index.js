@@ -4,11 +4,13 @@ const Wreck = require('@hapi/wreck')
 
 // Wreck wraps upstream connection failures as a generic "Client request error", so log the real cause here
 Wreck.events = new EventEmitter()
-Wreck.events.on('response', (err, { uri }) => {
-  if (err) {
+Wreck.events.on('response', (err, { req, uri }) => {
+  // A browser cancelling a request (e.g. panning the map) surfaces as ECONNRESET, which is just noise
+  if (err && !req.clientAborted) {
     const { code, errors, message, syscall } = err.data || err
     console.log('upstream request error', {
       host: uri.host,
+      path: uri.pathname,
       code,
       syscall,
       message,

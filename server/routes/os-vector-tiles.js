@@ -1,5 +1,5 @@
 const { getOsToken } = require('../services/getOsToken')
-const { upstreamAgent } = require('../services/upstreamAgent')
+const { upstreamProxyOptions } = require('../services/upstreamProxyOptions')
 const { safeProxyRequest } = require('../services/safeProxyRequest')
 const { logDebug } = require('../services/logDebug')
 
@@ -34,7 +34,7 @@ module.exports = {
     handler: {
       proxy: {
         passThrough: true,
-        agent: upstreamAgent,
+        ...upstreamProxyOptions,
         mapUri: buildVectorTilesUri
       }
     }
