@@ -43,7 +43,7 @@ describe('createEsriProxyRoute', () => {
       logLabel: 'esri'
     })
 
-    expect(route.method).toEqual(['GET', 'POST'])
+    expect(route.method).toEqual('GET')
     expect(route.path).toBe('/proxy/esri/{path*}')
     expect(route.options.description).toBe('Proxy ESRI requests while injecting short-lived AGOL token server-side')
     expect(route.options.auth).toBe(false)
@@ -113,7 +113,6 @@ describe('createEsriProxyRoute', () => {
     })
 
     await expect(route.options.handler.proxy.mapUri({
-      method: 'POST',
       params: {
         path: 'FeatureServer/0/query'
       },

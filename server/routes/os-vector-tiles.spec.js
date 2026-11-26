@@ -42,10 +42,21 @@ describe('os-vector-tiles route', () => {
     expect(upstream.searchParams.get('slds')).toBe('true')
   })
 
-  it('proxies POST requests', async () => {
-    const { upstreamMethod, upstream } = await proxy('/os-vector-tiles/road.json?epsg=27700', 'POST')
+  it('does not accept POST', async () => {
+    const response = await server.inject({ method: 'POST', url: 'http://localhost:3005/os-vector-tiles/road.json' })
+    expect(response.statusCode).toBe(404)
+    expect(wreckRequestMock).not.toHaveBeenCalled()
+  })
 
-    expect(upstreamMethod).toBe('post')
-    expect(upstream.searchParams.get('epsg')).toBe('27700')
+  it.each([
+    '/os-vector-tiles/%2f%2fwww.arcgis.com/sharing',
+    '/os-vector-tiles/https:%2f%2fevil.example/x',
+    '/os-vector-tiles/..%09/..%09/x',
+    '/os-vector-tiles/a/..%2f..%2fx',
+    '/os-vector-tiles/road.json?f=html'
+  ])('rejects %s', async (url) => {
+    const response = await server.inject({ method: 'GET', url: `http://localhost:3005${url}` })
+    expect(response.statusCode).toBe(400)
+    expect(wreckRequestMock).not.toHaveBeenCalled()
   })
 })
