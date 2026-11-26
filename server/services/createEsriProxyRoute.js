@@ -7,7 +7,6 @@ const { getEsriTileName } = require('./getEsriTileName')
 // token:we can ignore this, as it gets added here
 // blankTile:Boolean (false) -- Controls empty/missing tile fallback responses.
 // v: cache busting version string occasionally used to force refresh of tiles.
-
 const createEsriProxyRoute = ({
   tileName,
   path,
@@ -16,7 +15,7 @@ const createEsriProxyRoute = ({
   logLabel
 }) => {
   return {
-    method: ['GET', 'POST'],
+    method: 'GET',
     path,
     options: {
       description,
