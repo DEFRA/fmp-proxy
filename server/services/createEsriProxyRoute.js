@@ -1,3 +1,4 @@
+const { upstreamAgent } = require('./upstreamAgent')
 const { getEsriToken } = require('./getEsriToken')
 const { logDebug } = require('./logDebug')
 const { getEsriTileName } = require('./getEsriTileName')
@@ -30,6 +31,7 @@ const createEsriProxyRoute = ({
       handler: {
         proxy: {
           passThrough: true,
+          agent: upstreamAgent,
           mapUri: async (request) => {
             const requestPath = request.params.path ? `/${request.params.path}` : ''
             const esriTileName = getEsriTileName(tileName)

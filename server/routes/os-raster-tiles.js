@@ -2,6 +2,7 @@ const Boom = require('@hapi/boom')
 const { getOsToken } = require('../services/getOsToken')
 const { logDebug } = require('../services/logDebug')
 const { config } = require('../config')
+const { upstreamAgent } = require('../services/upstreamAgent')
 const { safeProxyRequest } = require('../services/safeProxyRequest')
 
 const OS_RASTER_WMTS_URL = 'https://api.os.uk/maps/raster/v1/wmts'
@@ -100,6 +101,7 @@ module.exports = {
     handler: {
       proxy: {
         passThrough: true,
+        agent: upstreamAgent,
         mapUri: buildRasterTilesUri,
         onResponse: handleResponse
       }
