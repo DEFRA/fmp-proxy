@@ -2,13 +2,14 @@ const Boom = require('@hapi/boom')
 const { getOsToken } = require('../services/getOsToken')
 const { logDebug } = require('../services/logDebug')
 const { config } = require('../config')
+const { safeProxyRequest } = require('../services/safeProxyRequest')
 
 const OS_RASTER_WMTS_URL = 'https://api.os.uk/maps/raster/v1/wmts'
 
 // Only the layer the map uses is allowed, as other layers are premium and billed at a higher rate
 const ALLOWED_LAYERS = new Set(['Outdoor_27700'])
 const ALLOWED_REQUESTS = new Set(['gettile', 'getcapabilities'])
-const SINGLE_VALUE_PARAMS = ['service', 'request', 'layer', 'key']
+const SINGLE_VALUE_PARAMS = new Set(['service', 'request', 'layer', 'key'])
 const REDACTED = 'REDACTED'
 
 // WMTS parameter names are case insensitive, so compare them in lower case
@@ -16,7 +17,7 @@ const getParams = (searchParams) => {
   const params = new Map()
   for (const [name, value] of searchParams) {
     const lowerName = name.toLowerCase()
-    if (SINGLE_VALUE_PARAMS.includes(lowerName) && params.has(lowerName)) {
+    if (SINGLE_VALUE_PARAMS.has(lowerName) && params.has(lowerName)) {
       throw Boom.badRequest(`Duplicate ${lowerName} parameter`)
     }
     params.set(lowerName, value)
@@ -92,7 +93,10 @@ module.exports = {
   options: {
     description: 'Proxy OS raster tile (WMTS) requests while keeping the provider path hidden behind the app proxy',
     auth: false,
-    pre: [{ method: validateRasterRequest, assign: 'validateRasterRequest' }],
+    pre: [
+      { method: safeProxyRequest, assign: 'safeProxyRequest' },
+      { method: validateRasterRequest, assign: 'validateRasterRequest' }
+    ],
     handler: {
       proxy: {
         passThrough: true,

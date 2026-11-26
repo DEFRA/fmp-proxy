@@ -54,4 +54,20 @@ describe('createServer', () => {
 
     await server.stop()
   })
+
+  it.each([
+    ['a successful response', '/proxy/success'],
+    ['an error response', '/proxy/not-found']
+  ])('adds hardening headers to %s', async (_description, url) => {
+    const createServer = require('./createServer')
+    const server = await createServer()
+    server.route({ method: 'GET', path: '/proxy/success', handler: () => ({ ok: true }) })
+
+    const response = await server.inject({ method: 'GET', url })
+
+    expect(response.headers['x-content-type-options']).toBe('nosniff')
+    expect(response.headers['content-security-policy']).toBe("default-src 'none'; sandbox")
+
+    await server.stop()
+  })
 })

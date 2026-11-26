@@ -1,4 +1,5 @@
 const { getOsToken } = require('../services/getOsToken')
+const { safeProxyRequest } = require('../services/safeProxyRequest')
 const { logDebug } = require('../services/logDebug')
 
 const OS_API_BASE = 'https://api.os.uk/'
@@ -28,6 +29,7 @@ module.exports = {
   options: {
     description: 'Proxy a vague OS place lookup request while injecting bearer token server-side',
     auth: false,
+    pre: [{ method: safeProxyRequest, assign: 'safeProxyRequest' }],
     handler: {
       proxy: {
         passThrough: true,

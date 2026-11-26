@@ -1,7 +1,12 @@
 const Boom = require('@hapi/boom')
 
 const ALLOWED_FORMATS = new Set(['json', 'pjson', 'pbf'])
-const CREDENTIAL_HEADERS = ['authorization', 'x-esri-authorization', 'x-forwarded-host']
+const CREDENTIAL_HEADERS = ['authorization', 'x-esri-authorization']
+// Visitor cookies and client attribution headers must not be passed on to the upstream provider
+const NON_FORWARDED_HEADERS = [
+  'cookie', 'x-forwarded-host', 'x-real-ip', 'true-client-ip', 'client-ip', 'cf-connecting-ip',
+  'forwarded', 'x-originating-ip', 'x-client-ip', 'x-forwarded-for', 'x-forwarded-proto', 'x-forwarded-port', 'via'
+]
 
 // hapi has already percent-decoded params.path, so anything dangerous is visible here
 // eslint-disable-next-line no-control-regex
@@ -22,7 +27,7 @@ const safeProxyRequest = (request, h) => {
     throw Boom.badRequest('Unsupported format')
   }
 
-  CREDENTIAL_HEADERS.forEach(header => delete request.headers[header])
+  [...CREDENTIAL_HEADERS, ...NON_FORWARDED_HEADERS].forEach(header => delete request.headers[header])
   delete request.query.token
 
   return h.continue

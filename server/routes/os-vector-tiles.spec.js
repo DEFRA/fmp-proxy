@@ -42,6 +42,21 @@ describe('os-vector-tiles route', () => {
     expect(upstream.searchParams.get('slds')).toBe('true')
   })
 
+  it('does not forward visitor cookies, credentials or attribution headers', async () => {
+    await server.inject({
+      method: 'GET',
+      url: 'http://localhost:3005/os-vector-tiles/road.json',
+      headers: { cookie: 'p4Customer=abc; fmp=x', authorization: 'Bearer evil', 'x-real-ip': '1.2.3.4', 'true-client-ip': '1.2.3.4', forwarded: 'for=1.2.3.4' }
+    })
+
+    const { headers } = wreckRequestMock.mock.calls[0][2]
+    expect(headers.cookie).toBeUndefined()
+    expect(headers['x-real-ip']).toBeUndefined()
+    expect(headers['true-client-ip']).toBeUndefined()
+    expect(headers.forwarded).toBeUndefined()
+    expect(headers.authorization).toMatch(/token$/)
+  })
+
   it('does not accept POST', async () => {
     const response = await server.inject({ method: 'POST', url: 'http://localhost:3005/os-vector-tiles/road.json' })
     expect(response.statusCode).toBe(404)
