@@ -1,6 +1,6 @@
 const Boom = require('@hapi/boom')
 
-const ALLOWED_FORMATS = ['json', 'pjson', 'pbf']
+const ALLOWED_FORMATS = new Set(['json', 'pjson', 'pbf'])
 const CREDENTIAL_HEADERS = ['authorization', 'x-esri-authorization', 'x-forwarded-host']
 
 // hapi has already percent-decoded params.path, so anything dangerous is visible here
@@ -18,7 +18,7 @@ const safeProxyRequest = (request, h) => {
   }
 
   const format = request.query.f
-  if (format !== undefined && !ALLOWED_FORMATS.includes(format)) {
+  if (format !== undefined && !ALLOWED_FORMATS.has(format)) {
     throw Boom.badRequest('Unsupported format')
   }
 

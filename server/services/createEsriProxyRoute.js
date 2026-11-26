@@ -2,6 +2,7 @@ const { getEsriToken } = require('./getEsriToken')
 const { logDebug } = require('./logDebug')
 const { getEsriTileName } = require('./getEsriTileName')
 const { safeProxyRequest } = require('./safeProxyRequest')
+const { restrictEsriOperations } = require('./restrictEsriOperations')
 
 // According to Google AI - these are the definitive list of potential vector tile query parameters:
 // f:String (json, pjson) - Response formatting for service root and metadata.
@@ -13,7 +14,8 @@ const createEsriProxyRoute = ({
   path,
   baseUrl,
   description,
-  logLabel
+  logLabel,
+  allowedPaths
 }) => {
   return {
     method: 'GET',
@@ -21,7 +23,10 @@ const createEsriProxyRoute = ({
     options: {
       description,
       auth: false,
-      pre: [{ method: safeProxyRequest, assign: 'safeProxyRequest' }],
+      pre: [
+        { method: safeProxyRequest, assign: 'safeProxyRequest' },
+        { method: restrictEsriOperations(allowedPaths), assign: 'restrictEsriOperations' }
+      ],
       handler: {
         proxy: {
           passThrough: true,
