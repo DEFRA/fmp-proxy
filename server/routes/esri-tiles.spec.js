@@ -27,4 +27,29 @@ describe('esri-tiles route', () => {
     expect(upstream.origin).toBe('https://tiles.arcgis.com')
     expect(upstream.pathname.endsWith(`/VectorTileServer/resources/sprites/${file}`)).toBe(true)
   })
+
+  it.each([
+    '/esri-tiles/flood-zones/..%09/..%09/x?f=json',
+    '/esri-tiles/flood-zones/..%0a/..%0a/x',
+    '/esri-tiles/flood-zones?f=html',
+    '/esri-tiles/flood-zones/exportTiles?f=json',
+    '/esri-tiles/flood-zones/exportTiles/jobs/abc?f=json',
+    '/esri-tiles/flood-zones/jobs/abc?f=json',
+    '/esri-tiles/flood-zones/uploads/register?f=json',
+    '/esri-tiles/flood-zones/tilemap/a/b/c'
+  ])('refuses %s', async (url) => {
+    const { server, wreckRequestMock } = esriTestVariables
+    const response = await server.inject({ method: 'GET', url: `http://localhost:3005${url}` })
+
+    expect(response.statusCode).toBeGreaterThanOrEqual(400)
+    expect(wreckRequestMock).not.toHaveBeenCalled()
+  })
+
+  it('does not accept a dataset name outside the allow-list', async () => {
+    const { server, wreckRequestMock } = esriTestVariables
+    const response = await server.inject({ method: 'GET', url: 'http://localhost:3005/esri-tiles/nat_fsa/tile/0/0/0.pbf' })
+
+    expect(response.statusCode).toBe(404)
+    expect(wreckRequestMock).not.toHaveBeenCalled()
+  })
 })
