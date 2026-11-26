@@ -1,10 +1,11 @@
 const { getOsToken } = require('../services/getOsToken')
+const { safeProxyRequest } = require('../services/safeProxyRequest')
 const { logDebug } = require('../services/logDebug')
 
 const OS_API_BASE = 'https://api.os.uk/maps/vector/v1/vts/'
 
 const buildVectorTilesUri = async (request) => {
-  const targetUrl = new URL(request.params.path, OS_API_BASE)
+  const targetUrl = new URL(`${OS_API_BASE}${request.params.path}`)
 
   Object.entries(request.query).forEach(([key, value]) => {
     targetUrl.searchParams.set(key, value)
@@ -23,19 +24,12 @@ const buildVectorTilesUri = async (request) => {
 }
 
 module.exports = {
-  method: ['GET', 'POST'],
+  method: 'GET',
   path: '/os-vector-tiles/{path*}',
   options: {
     description: 'Proxy OS vector tile requests while keeping the provider path hidden behind the app proxy',
     auth: false,
-    pre: [{
-      // AGOL routes on the host name, so an upstream X-Forwarded-Host (e.g. localhost:3020) gives "Server not found"
-      method: (request, h) => {
-        delete request.headers['x-forwarded-host']
-        return h.continue
-      },
-      assign: 'stripForwardedHost'
-    }],
+    pre: [{ method: safeProxyRequest, assign: 'safeProxyRequest' }],
     handler: {
       proxy: {
         passThrough: true,

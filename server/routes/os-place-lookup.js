@@ -8,7 +8,7 @@ const osNamesParameters = 'fq=local_type:postcode%20local_type:hamlet%20local_ty
 
 const buildMapUri = async (request) => {
   const placeName = request.params?.placeName
-  const upstreamUri = `${OS_API_BASE}${PATH}?query=${placeName}&${osNamesParameters}`
+  const upstreamUri = `${OS_API_BASE}${PATH}?query=${encodeURIComponent(placeName)}&${osNamesParameters}`
 
   logDebug('os-place', 'rewritten', {
     method: request.method,
@@ -23,7 +23,7 @@ const buildMapUri = async (request) => {
 }
 
 module.exports = {
-  method: ['GET', 'POST'],
+  method: 'GET',
   path: '/place-lookup/{placeName}',
   options: {
     description: 'Proxy a vague OS place lookup request while injecting bearer token server-side',

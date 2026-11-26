@@ -24,7 +24,7 @@ const buildRasterTilesUri = async (request) => {
 }
 
 module.exports = {
-  method: ['GET', 'POST'],
+  method: 'GET',
   path: '/os-raster-tiles',
   options: {
     description: 'Proxy OS raster tile (WMTS) requests while keeping the provider path hidden behind the app proxy',

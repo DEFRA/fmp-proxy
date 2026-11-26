@@ -1,6 +1,7 @@
 const { getEsriToken } = require('./getEsriToken')
 const { logDebug } = require('./logDebug')
 const { getEsriTileName } = require('./getEsriTileName')
+const { safeProxyRequest } = require('./safeProxyRequest')
 
 // According to Google AI - these are the definitive list of potential vector tile query parameters:
 // f:String (json, pjson) - Response formatting for service root and metadata.
@@ -20,14 +21,7 @@ const createEsriProxyRoute = ({
     options: {
       description,
       auth: false,
-      pre: [{
-        // AGOL routes on the host name, so an upstream X-Forwarded-Host (e.g. localhost:3020) gives "Server not found"
-        method: (request, h) => {
-          delete request.headers['x-forwarded-host']
-          return h.continue
-        },
-        assign: 'stripForwardedHost'
-      }],
+      pre: [{ method: safeProxyRequest, assign: 'safeProxyRequest' }],
       handler: {
         proxy: {
           passThrough: true,
